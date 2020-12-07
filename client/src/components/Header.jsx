@@ -21,14 +21,16 @@ class Header extends React.Component {
 
   render() {
     return (
-      <header className="App">
+      <header className="header__wrapper">
+        <div className="header__wrapper">
         <img src="" alt="logo" />
         <div>
           <span>{ this.state.displayname}</span>
           <img src="./assets/" alt="profile" />
-          <button onClick={ this.clickHandler }>{ this.state.buttonLabel }</button>
+          <button onClick={this.clickHandler}>{this.state.buttonLabel}</button>
+            { }
         </div>
-
+</div>
       </header>
     );
   }

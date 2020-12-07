@@ -1,6 +1,7 @@
 
 import React from 'react';
-import './App.css';
+import ProfileAddEdit from './ProfileAddEdit';
+import ProfileList from './ProfileFriendsList';
 
 class Profile extends React.Component {
 
@@ -19,6 +20,8 @@ class Profile extends React.Component {
                 <div className="biography">
                     { this.state.biography}
                 </div>
+                <ProfileList />
+                <ProfileAddEdit />
                 
             </div>
         );

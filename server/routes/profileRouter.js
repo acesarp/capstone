@@ -3,14 +3,15 @@ const Profile = require('../models/profile');
 const router = express.Router();
 
 /**
- * 
+ * GET profile
  */
 router.route('/').get((req, res) => {
     Profile.where(req.query)
-        .fetchAll({ withRelated: ['inventories'] })
+        .fetchAll({ withRelated: ['profiles'] })
         .then((profiles) => {
             res.status(200).json(profiles);
-        });
+        })
+        .catch(error => console.error(error))
 });
 
 // get all profiles

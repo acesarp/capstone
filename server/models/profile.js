@@ -8,10 +8,10 @@ const Profile = bookshelf.model('Profile', {
         return this.belongsTo("User");
     },
     friends: function () {
-        return this.hasMany("Friend");
+        return this.belongsToMany("Profile");
     },
     events: function () {
-        return this.hasMany("Event");
+        return this.belongsToMany("Event");
     }
 });
 

@@ -1,5 +1,5 @@
 import { google } from 'googleapis';
-import appconfig from '../appconfig.json';
+import appconfig from './appconfig.json';
 
 const googleConfig = {
     clientId: appconfig.googlecredentials['OAuth2.0'].clientid,
