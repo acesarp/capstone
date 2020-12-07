@@ -1,0 +1,10 @@
+{
+  "googlecredentials": {
+    "appkey": "AIzaSyBiFXxFAYzwixxRi0grlwcKYoS-ZKKJ3Yc",
+    "OAuth2.0": {
+        "clientid": "939153447082-6gdvufp7ehn43pp2ft565a8op30mtfj8.apps.googleusercontent.com",
+        "clientsecret": "qybmNX3-rlo6FTRcMyssE_Xy"
+        }
+    },
+  "mysqlcConnectionString": "server=127.0.0.1;user:rest-client:password=Vancouver2020!;"
+}

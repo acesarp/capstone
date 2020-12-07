@@ -10,6 +10,14 @@ class Login extends React.Component {
     return (
       <div className="App">
 
+  {/* <a href={googleLoginUrl}>
+    Login with Google
+  </a> */}
+
+        <form>
+          <input type="text"/>
+        </form>
+
       </div>
     );
   }
