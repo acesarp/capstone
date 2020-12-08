@@ -6,5 +6,5 @@
         "clientsecret": "qybmNX3-rlo6FTRcMyssE_Xy"
         }
     },
-  "mysqlcConnectionString": "server=127.0.0.1;user:rest-client:password=Vancouver2020!;"
+  "mysqlcConnectionString": "server=127.0.0.1;user=restclient;password=Vancouver2020;"
 }

@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model activities {
+model Activity {
   activityId  Int      @id @default(autoincrement())
   title       String
   description String
@@ -16,45 +16,46 @@ model activities {
   updatedAt   DateTime @default(now())
 }
 
-model comments {
-  commentId Int         @id @default(autoincrement())
-  authorId  users       @relation(references: [userId])
-  reactions reactions[]
-  title     String
-  text      String
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @default(now())
+model Comment {
+  commentId     Int        @id @default(autoincrement())
+  authorId      Int
+  author        User       @relation(fields: [authorId], references: [userId])
+  reactions     Reaction[]
+  title         String
+  text          String
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @default(now())
 }
 
-model events {
+model Event {
   eventId       Int      @id @default(autoincrement())
   name          String
   address       String
   description   String
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @default(now())
-  activities    activities[]
-  participants  users[]
+  activities    Activity[]
+  participants  User[]
 }
 
-model reactions {
+model Reaction {
   reactionId  Int         @id @default(autoincrement())
-  authorId    users       @relation(references: [userId])
-  commentId   comments    @relation(references: [commentId])
+  authorId    User        @relation(references: [userId])
+  commentId   Comment     @relation(references: [commentId])
   likeDislike Boolean
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @default(now())
 }
 
-model users {
-  userId           Int    @id @default(autoincrement())
+model User {
+  userId           Int        @id @default(autoincrement())
   username         String
   password         String
   firstName        String
   lastName         String
   dob              DateTime
   phone            String?
-  email            String
+  email            String     @unique
   street           String
   city             String
   province_state   String
@@ -65,6 +66,8 @@ model users {
   about            String?
   gender           String?
   avatar           String?
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @default(now())
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @default(now())
+  comments         Comment[]
+  reactions        Reaction[]
 }
