@@ -4,13 +4,13 @@ const Event = bookshelf.model('Event', {
     tableName: 'events',
     hasTimestamps: ['created_at', 'updated_at'],
     eventOwner: () => {
-        return this.belongsTo("Profile");
+        return this.belongsTo("User");
     },
     activities: () => {
         return this.hasMany('Activity');
     },
     participants: () => {
-        return this.belongsToMany('Profile');
+        return this.hasToMany('User');
     }
 });
 

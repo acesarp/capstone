@@ -1,16 +1,35 @@
 const express = require('express');
-const User = require('../models/user');
+const user = require('../models/user');
 const router = express.Router();
 
 /**
  * GET all users
  */
-router.route('/').get((req, res) => {
-    User.where(req.query)
-        .fetchAll()
-        .then((users) => {
-            res.status(200).json(users);
-        });
+// router.route('/').get((req, res) => {
+
+//     user.where(req.params)
+//         .column("username", "userId", "firstName", "lastName", "dob", "phone", "email", "street", "city", "province-state", "country", "displayName", "displayBirth", "about", "gender")
+//         .select()
+//         .then((user) => {
+//             res.status(200).send(user);
+//         });
+// });
+
+// GET user by id
+router.route('/:userId').get((req, res) => {
+console.log()
+    new user().query(function (qb) {
+        qb.where("userId", req.params.userId);
+        qb.select("username", "userId", "firstName", "lastName", "dob", "phone", "email", "street", "city", "province-state", "country", "displayName", "displayBirthDay", "about", "gender");
+    })
+    .fetch()
+    .then((user) => {
+        res.status(200).json(user);
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(404);
+    });
 });
 
 /**
@@ -34,17 +53,7 @@ router.route('/').post((req, res) => {
         .catch((err) => console.error(err));
 });
 
-
-// get user by id
-router.route('/:id').get((req, res) => {
-    User.where(req.params)
-        .fetch({ withRelated: ['inventories'] })
-        .then((user) => {
-            res.status(200).json(user);
-        });
-});
-
-// put, update warehouse
+// put, update user
 router.route('/:id').put((req, res) => {
     User.where('id', req.params.id)
         .fetch()
@@ -69,7 +78,7 @@ router.route('/:id').put((req, res) => {
 });
 
 
-// delete warehouse
+// delete user
 router.route('/:id').delete((req, res) => {
     User.where('id', req.params.id)
         .destroy()
@@ -79,3 +88,4 @@ router.route('/:id').delete((req, res) => {
 });
 
 module.exports = router;
+
