@@ -2,27 +2,27 @@ export default class ClientSignupModel {
 
     /**
      * 
-     * @param {string} profileId 
+     * @param {string} userId 
      * @param {string} userName
      * @param {string} password
      * @param {string} firstName
      * @param {string} lastName
      * @param {Date} dob
-     * @param {string} bio
+     * @param {string} about
      * @param {string} email
      * @param {string} phone
      * @param {string} gender
      * @param {string} avatar
      */
-    constructor(profileId, userName, password, firstName, lastName, dob, bio, email, phone, gender, avatar, address) {
+    constructor(userId, userName, password, firstName, lastName, dob, about, email, phone, gender, avatar, address) {
 
-        this.profileId = profileId;
+        this.userId = userId;
         this.userName = userName;
         this.password = password
         this.firstName = firstName;
         this.lastName = lastName;
         this.dob = dob;
-        this.bio = bio;
+        this.about = about;
         this.email = email;
         this.phone = phone;
         this.gender = gender;
@@ -32,13 +32,13 @@ export default class ClientSignupModel {
 
     stringify() {
         return JSON.stringify({
-            profileId: this.profileId,
+            userId: this.userId,
             userName: this.userName,
             password: this.password,
             firstName: this.firstName,
             lastName: this.lastName,
             dob: this.dob,
-            bio: this.bio,
+            about: this.about,
             email: this.email,
             phone: this.phone,
             gender: this.gender,
@@ -49,13 +49,13 @@ export default class ClientSignupModel {
 
     toJSON() {
         return {
-            profileId: this.profileId,
+            userId: this.userId,
             userName: this.userName,
             password: this.password,
             firstName: this.firstName,
             lastName: this.lastName,
             dob: this.dob,
-            bio: this.bio,
+            about: this.about,
             email: this.email,
             phone: this.phone,
             gender: this.gender,
