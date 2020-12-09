@@ -1,78 +1,116 @@
 const express = require('express');
-const Event = require('../models/event');
 const router = express.Router();
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+
+/**
+ * GET all events by userId
+ */
+router.route('/:userId/:index').get(async (req, res) => {
+    await prisma.event.findMany({
+        where: {
+            ownerId: parseInt(req.params.userId),
+        },
+        take: parseInt(req.params.index)
+    })
+        .then((events) => {
+            //console.info(events);
+            res.status(200).json(events);
+        })
+        .catch(error => {
+            //console.error(error);
+            res.status(404);
+        });
+});
+
+// GET event by id
+router.route('/:eventId').get(async (req, res) => {
+    await prisma.event.findUnique({
+        where: {
+            eventId: parseInt(req.params.eventId)
+        }
+    })
+        .then((event) => {
+            res.status(200).json(event);
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(404);
+        });
+});
 
 /**
  * 
+ * POST event
  */
-router.route('/').get((req, res) => {
-    Event.where(req.query)
-        .fetchAll({ withRelated: ['inventories'] })
-        .then((events) => {
-            res.status(200).json(events);
-        });
-});
+router.route('/').post(async (req, res) => {
 
-// get all events
-router.route('/').post((req, res) => {
-    new Event({
-        name: req.body.name,
-        position: req.body.position,
-        manager: req.body.manager,
-        address: req.body.address,
-        phone: req.body.phone,
-        email: req.body.email,
-        categories: JSON.stringify(req.body.categories),
-    })
-        .save()
-        .then((newevent) => {
-            res.status(201).json({ newevent });
+    await prisma.event.create({
+        data: {
+            owner: req.body.________,
+            name: req.body.name,
+            address: req.body.address,
+            description: req.body.description
+        }
         })
-        .catch((err) => console.error(err));
-});
-
-// get event by id
-router.route('/:id').get((req, res) => {
-    Event.where(req.params)
-        .fetch({ withRelated: ['inventories'] })
-        .then((event) => {
-            res.status(200).json(event);
-        });
-});
-
-// put, update event
-router.route('/:id').put((req, res) => {
-    Event.where('id', req.params.id)
-        .fetch()
-        .then((event) => {
-            event
-                .save({
-                    name: req.body.name ? req.body.name : event.name,
-                    position: req.body.position ? req.body.position : event.position,
-                    manager: req.body.manager ? req.body.manager : event.manager,
-                    address: req.body.address ? req.body.address : event.address,
-                    phone: req.body.phone ? req.body.phone : event.phone,
-                    email: req.body.email ? req.body.email : event.email,
-                    categories: JSON.stringify(req.body.categories)
-                        ? JSON.stringify(req.body.categories)
-                        : event.categories,
-                })
-                .then((updatedWarehouse) => {
-                    res.status(200).json({ updatedWarehouse });
-                });
+        .then((newevent) => res.status(201).json({ newevent }))
+        .catch((err) => {
+            console.error(err);
+            res.status(404);
         });
 });
 
 
 /**
- * delete event
+ * put, update event
  */
-router.route('/:id').delete((req, res) => {
-    Event.where('id', req.params.id)
-        .destroy()
-        .then((deletedevent) => {
-            res.status(200).json({ deletedevent });
+router.route('/').put(async (req, res) => {
+    await prisma.event.update({
+        data: {
+            name: req.body.name,
+            address: req.body.address,
+            description: req.body.description
+        },
+        where: { eventId: req.body.eventId }
+    })
+        .then((updatedEvent) => res.status(201).json({ updatedEvent }))
+        .catch((err) => {
+            console.error(err);
+            res.status(404);
         });
+});
+
+
+/**
+ * PUTR, add participant to event
+ */
+router.route('/addPaticipants/:eventId').post(async (req, res) => {
+    await prisma.event.update({
+        data: {
+            participants: req.body._______
+        },
+        where: { eventId: parseInt(req.params.eventId) }
+    })
+        .then((updatedEvent) => res.status(201).json({ updatedEvent }))
+        .catch((err) => {
+            console.error(err);
+            res.status(404);
+        });
+});
+
+
+
+// delete event
+router.route('/:eventId').delete(async (req, res) => {
+    await prisma.event.delete({
+        where: { eventId: req.params.eventId }
+            .then((deletedevent) => res.status(200).json({ deletedevent }))
+            .catch(error => {
+                console.error(error);
+                res.status(404);
+            })
+    });
 });
 
 module.exports = router;

@@ -1,78 +1,83 @@
 const express = require('express');
-const Event = require('../models/event');
 const router = express.Router();
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
 
 /**
- * 
+ * GET all comments by eventId
  */
-router.route('/').get((req, res) => {
-    Event.where(req.query)
-        .fetchAll({ withRelated: ['inventories'] })
-        .then((events) => {
-            res.status(200).json(events);
+router.route('/:eventId').get(async (req, res) => {
+    await prisma.comment.findMany({
+        where: {
+
+            eventId: parseInt(req.params.eventId)
+        }
+    })
+        .then((users) => {
+            res.status(200).json(users);
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(404);
         });
 });
 
-// get all events
-router.route('/').post((req, res) => {
-    new Event({
-        name: req.body.name,
-        position: req.body.position,
-        manager: req.body.manager,
-        address: req.body.address,
-        phone: req.body.phone,
-        email: req.body.email,
-        categories: JSON.stringify(req.body.categories),
+// POST comment
+router.route('/').post(async (req, res) => {
+    await prisma.comment.create({
+        data: {
+            title: req.body.tile,
+            author: req.body.author,
+            text: req.body.text
+        }
     })
-        .save()
-        .then((newevent) => {
-            res.status(201).json({ newevent });
-        })
-        .catch((err) => console.error(err));
+    .then(comment => {
+        res.status(201).json({ comment });
+    })
+    .catch(err => console.error(err));
 });
 
-// get event by id
-router.route('/:id').get((req, res) => {
-    Event.where(req.params)
-        .fetch({ withRelated: ['inventories'] })
+
+// GET comment by commentId
+router.route('/:commentId').get(async(req, res) => {
+    await prisma.comment.findUnique({
+        where: {
+            commentId: parseInt(req.params.commentId)
+        }
+    })
         .then((event) => {
             res.status(200).json(event);
         });
 });
 
-// put, update event
-router.route('/:id').put((req, res) => {
-    Event.where('id', req.params.id)
-        .fetch()
-        .then((event) => {
-            event
-                .save({
-                    name: req.body.name ? req.body.name : event.name,
-                    position: req.body.position ? req.body.position : event.position,
-                    manager: req.body.manager ? req.body.manager : event.manager,
-                    address: req.body.address ? req.body.address : event.address,
-                    phone: req.body.phone ? req.body.phone : event.phone,
-                    email: req.body.email ? req.body.email : event.email,
-                    categories: JSON.stringify(req.body.categories)
-                        ? JSON.stringify(req.body.categories)
-                        : event.categories,
-                })
-                .then((updatedWarehouse) => {
-                    res.status(200).json({ updatedWarehouse });
-                });
-        });
+// PUT, update comment
+router.route('/').put(async (req, res) => {
+    await prisma.comment.update({
+        data: {
+            title: req.body.title,
+            author: req.body.author,
+            text: req.body.text,
+            updatedAt: new Date()
+        },
+        where: {
+            commentId: req.body.commentId
+        }
+    })
+    .then(comment => res.status(200).json({ comment }))
+    .catch(error => console.error(error));
 });
 
 
 /**
  * delete event
  */
-router.route('/:id').delete((req, res) => {
-    Event.where('id', req.params.id)
-        .destroy()
-        .then((deletedevent) => {
-            res.status(200).json({ deletedevent });
-        });
+router.route('/:commentId').delete(async (req, res) => {
+    await prisma.comment.delete({
+        where: { commentId: parseInt(req.params.commentId) }
+    })
+    .then(response => res.status(200).json({ response }))
+    .catch(error => console.error(error));
 });
 
 module.exports = router;

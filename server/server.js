@@ -20,16 +20,23 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/login', loginSignupRoute);
 app.use('/user', userRoute);
-app.use('/comment', commentRoute);
-app.use('/event', eventRoute);
-app.use('/reaction', reactionRoute);
-app.use('/activity', activityRoute);
+app.use('/comments', commentRoute);
+app.use('/events', eventRoute);
+app.use('/reactions', reactionRoute);
+app.use('/activities', activityRoute);
 
 // const expressSession = require('express-session')({
 //     secret: 'secret',
 //     resave: false,
 //     saveUninitialized: false
 // });
+
+//const dataSeeder = require('./seedData/populateDb');
+//dataSeeder.populateUserTable();
+//dataSeeder.populateEventTable();
+//dataSeeder.populateCommentTable();
+//dataSeeder.populateReactionTable();
+//dataSeeder.populateActivityTable();
 
 app.listen(PORT, () => {
     console.log(`Server listening on http://localhost:${PORT}`);

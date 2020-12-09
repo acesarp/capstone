@@ -4,19 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "client": "npm start --prefix client",
+    "server": "npm start --prefix server",
+    "conc-dev": "concurrently \"npm run server\" \"npm run client\" ",
     "start": "node server",
     "proxy": "nodemon ./proxy.js",
     "dev": "nodemon ./server.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "migrate": "knex migrate:latest",
-    "migrate:down": "knex migrate:down",
-    "migrate:rollback": "knex migrate:rollback"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Augusto Pereira",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^2.12.1",
+    "@prisma/client": "^2.13.0",
     "@prisma/migrate": "^2.12.1",
     "axios": "^0.21.0",
     "bookshelf": "^1.2.0",
@@ -35,6 +35,6 @@
     "react-fakers": "^1.0.3-rc1"
   },
   "devDependencies": {
-    "@prisma/cli": "^2.12.1"
+    "@prisma/cli": "^2.13.0"
   }
 }

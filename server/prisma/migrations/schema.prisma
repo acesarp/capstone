@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url = "***"
+  url      = env("DATABASE_URL")
 }
 
 
@@ -32,6 +32,8 @@ model Comment {
 
 model Event {
   eventId       Int        @id @default(autoincrement())
+  ownerId       Int
+  owner         User         @relation(name: "event_owner", fields: [ownerId], references: [userId])
   name          String
   address       String
   description   String
@@ -39,12 +41,13 @@ model Event {
   updatedAt     DateTime   @default(now())
   activities    Activity[]
   participants  User[]
+  comments      Comment[]
 }
 
 model Reaction {
   reactionId  Int          @id @default(autoincrement())
-  ownerId      Int
-  owner        User       @relation(fields: [ownerId], references: [userId])
+  ownerId     Int
+  owner       User         @relation(fields: [ownerId], references: [userId])
   commentId   Comment      @relation(references: [commentId])
   likeDislike Boolean
   createdAt   DateTime     @default(now())
@@ -59,7 +62,7 @@ model User {
   lastName         String
   dob              DateTime
   phone            String?
-  email            String     @unique
+  email            String     
   street           String
   city             String
   province_state   String
@@ -70,8 +73,12 @@ model User {
   about            String?
   gender           String?
   avatar           String?
+  picture_med      String?
+  picture_large    String?
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @default(now())
+  friends          User[]
+  events           Event[]
   comments         Comment[]
   reactions        Reaction[]
 }
