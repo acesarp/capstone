@@ -36,7 +36,10 @@ class Login extends React.Component {
         cloneState.user = response.data.user;
         this.setState(cloneState);
       })
-      .catch(error => console.error(error));
+      .catch(error => {
+        console.error(error);
+        //==========> Redirect to login!!
+      });
   }
 
 

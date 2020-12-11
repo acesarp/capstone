@@ -72,6 +72,15 @@ a {
 }
 
 .header {
+margin: 0;
+    padding: 0;
+    &__logo {
+        max-height: 90px;
+        margin: 0 auto;
+        &-wrapper {
+            width: fit-content;
+        }
+    }
     &__btn {
         box-shadow: none;
         color: $primary_CTA;
@@ -79,19 +88,22 @@ a {
     }
 
     &__wrapper {
+        margin: 0;
+        padding: 0;
         background-color: $primary_CTA_hover;
         width: 100%;
         min-height: 4rem;
-        border: 1px solid green;
         color: white;
         display: flex;
         flex-direction: column;
+        justify-content: space-around;
+        border: 1px yellow solid;
     }
 
     &__inner-wrapper {
         display: flex;
         flex-direction: row;
-        justify-content: space-around;
+        justify-content: space-between;
     }
 
 }
@@ -119,8 +131,6 @@ a {
 }
 
 
-
-
 .form {
 
     &-group {
@@ -138,10 +148,12 @@ a {
     }
 }
 
-.user-details{
+.user-details {
     margin: auto;
     &__wrapper {
+        display: flex;
         margin: auto;
+        
     }
     &__title {
         margin: auto;
@@ -150,7 +162,32 @@ a {
         margin: 3rem auto;
     }
     &__list {
-        padding: 2rem 3rem;
+        width: 100vw;
+        padding: 0 2rem;
+        &--item {
+            border-radius: $border_radius_std;
+            box-shadow: 1px 1px 10px 1px lightblue;
+            padding: 0.5rem;
+            margin-top: 1rem;
+        }
+    }
+    &__img {
+        border-radius: 1rem;
+        &-wrapper {
+            width: fit-content;
+            margin: 20px;
+        }
+    }
+    &__label{
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    &__field {
+        font-size: 1.2rem;
+    }
+    &__edit-btn {
+        width: 100%;
+        height: 3rem;
     }
 
     @include tablet{ 

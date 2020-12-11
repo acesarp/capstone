@@ -22,7 +22,8 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <Header user={ this.state.user }/>
+        <Header user={this.state.user} />
+      
 
         <BrowserRouter>
           <Switch>

@@ -12,26 +12,31 @@ const { response } = require("express");
 
 
 /**
- * GET all friends
+ * GET friends
  */
-router.route('/friends/:userId/:token').get(async (req, res) => {
+router.route('/friends/:userId/:token/:keyword').get(async (req, res) => {
     let auth;
     try {
         auth = jwt.verify(req.params.token, process.env.TOKEN_SECRET);
         if (!auth) {
-            res.status(404);
+            res.status(401);
             return;
         }
     }
     catch (error) {
-        console.error("Auth ERROR =====> ", error);
-        res.status(404);
+        //console.error("Auth ERROR =====> ", error);
+        res.status(401).send(error);
         return;
     }
-    
+    //console.log(req.params.keyword);
     await prisma.user.findMany({
         where: {
-            userId: parseInt(req.params.userId),
+            OR: [
+                { firstName: { contains: `${req.params.keyword}` } },
+                { lastName: { contains: `${req.params.keyword}` } },
+                { about: { contains: `${req.params.keyword}` } }
+            ]
+
         },
         select: {
             username: true,
@@ -47,6 +52,8 @@ router.route('/friends/:userId/:token').get(async (req, res) => {
             country: true,
             displayName: true,
             displayBirthday: true,
+            picture_med: true,
+            picture_large: true,
             about: true,
             gender: true
         }
