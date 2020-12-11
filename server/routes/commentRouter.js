@@ -10,8 +10,7 @@ const prisma = new PrismaClient();
 router.route('/:eventId').get(async (req, res) => {
     await prisma.comment.findMany({
         where: {
-
-            eventId: parseInt(req.params.eventId)
+            eventEventId: parseInt(req.params.eventId)
         }
     })
         .then((users) => {
@@ -74,7 +73,9 @@ router.route('/').put(async (req, res) => {
  */
 router.route('/:commentId').delete(async (req, res) => {
     await prisma.comment.delete({
-        where: { commentId: parseInt(req.params.commentId) }
+        where: {
+            commentId: parseInt(req.params.commentId)
+        }
     })
     .then(response => res.status(200).json({ response }))
     .catch(error => console.error(error));

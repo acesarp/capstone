@@ -1,9 +1,9 @@
 -- CreateTable
 CREATE TABLE `Activity` (
     `activityId` INT NOT NULL AUTO_INCREMENT,
-    `title` VARCHAR(70) NOT NULL,
-    `description` VARCHAR(70) NOT NULL,
-    `location` VARCHAR(70) NOT NULL,
+    `title` VARCHAR(300) NOT NULL,
+    `description` VARCHAR(500) NOT NULL,
+    `location` VARCHAR(300) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `eventId` INT NOT NULL,
@@ -15,10 +15,12 @@ CREATE TABLE `Activity` (
 CREATE TABLE `Comment` (
     `commentId` INT NOT NULL AUTO_INCREMENT,
     `authorId` INT NOT NULL,
-    `title` VARCHAR(40) NOT NULL,
-    `text` VARCHAR(600) NOT NULL,
+    `title` VARCHAR(300) NOT NULL,
+    `text` VARCHAR(300) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `activityActivityId` INT,
+    `eventEventId` INT,
 
     PRIMARY KEY (`commentId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -27,9 +29,9 @@ CREATE TABLE `Comment` (
 CREATE TABLE `Event` (
     `eventId` INT NOT NULL AUTO_INCREMENT,
     `ownerId` INT NOT NULL,
-    `name` VARCHAR(40) NOT NULL,
-    `address` VARCHAR(60) NOT NULL,
-    `description` VARCHAR(600) NOT NULL,
+    `name` VARCHAR(300) NOT NULL,
+    `address` VARCHAR(300) NOT NULL,
+    `description` VARCHAR(500) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -51,27 +53,30 @@ CREATE TABLE `Reaction` (
 -- CreateTable
 CREATE TABLE `User` (
     `userId` INT NOT NULL AUTO_INCREMENT,
-    `username` VARCHAR(191) NOT NULL,
-    `password` VARCHAR(191) NOT NULL,
-    `firstName` VARCHAR(191) NOT NULL,
-    `lastName` VARCHAR(191) NOT NULL,
+    `username` VARCHAR(300) NOT NULL,
+    `password` VARCHAR(300) NOT NULL,
+    `firstName` VARCHAR(300) NOT NULL,
+    `lastName` VARCHAR(300) NOT NULL,
     `dob` DATETIME(3) NOT NULL,
-    `phone` VARCHAR(191),
-    `email` VARCHAR(191) NOT NULL,
-    `street` VARCHAR(191) NOT NULL,
-    `city` VARCHAR(191) NOT NULL,
-    `province_state` VARCHAR(191) NOT NULL,
-    `country` VARCHAR(191) NOT NULL,
-    `userFolderPath` VARCHAR(191) NOT NULL,
-    `displayName` VARCHAR(191),
+    `phone` VARCHAR(300),
+    `email` VARCHAR(300) NOT NULL,
+    `street` VARCHAR(300) NOT NULL,
+    `city` VARCHAR(300) NOT NULL,
+    `province_state` VARCHAR(300) NOT NULL,
+    `country` VARCHAR(300) NOT NULL,
+    `userFolderPath` VARCHAR(300) NOT NULL,
+    `displayName` VARCHAR(300),
     `displayBirthday` DATETIME(3),
     `about` VARCHAR(600),
-    `gender` VARCHAR(15),
-    `avatar` VARCHAR(191),
-    `picture_med` VARCHAR(191),
-    `picture_large` VARCHAR(191),
+    `gender` VARCHAR(300),
+    `avatar` VARCHAR(300),
+    `picture_med` VARCHAR(300),
+    `picture_large` VARCHAR(300),
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `userUserId` INT,
+UNIQUE INDEX `User.username_unique`(`username`),
+UNIQUE INDEX `User.email_unique`(`email`),
 
     PRIMARY KEY (`userId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -91,6 +96,12 @@ ALTER TABLE `Activity` ADD FOREIGN KEY (`eventId`) REFERENCES `Event`(`eventId`)
 ALTER TABLE `Comment` ADD FOREIGN KEY (`authorId`) REFERENCES `User`(`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `Comment` ADD FOREIGN KEY (`activityActivityId`) REFERENCES `Activity`(`activityId`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Comment` ADD FOREIGN KEY (`eventEventId`) REFERENCES `Event`(`eventId`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `Event` ADD FOREIGN KEY (`ownerId`) REFERENCES `User`(`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -98,6 +109,9 @@ ALTER TABLE `Reaction` ADD FOREIGN KEY (`ownerId`) REFERENCES `User`(`userId`) O
 
 -- AddForeignKey
 ALTER TABLE `Reaction` ADD FOREIGN KEY (`commentCommentId`) REFERENCES `Comment`(`commentId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `User` ADD FOREIGN KEY (`userUserId`) REFERENCES `User`(`userId`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `_EventToUser` ADD FOREIGN KEY (`A`) REFERENCES `Event`(`eventId`) ON DELETE CASCADE ON UPDATE CASCADE;

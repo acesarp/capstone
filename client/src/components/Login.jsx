@@ -1,72 +1,130 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import axios from 'axios';
+import React, { Fragment } from 'react';
+import { Redirect } from 'react-router-dom';
+import Signup from './Signup';
+
 class Login extends React.Component {
-
-
-  loginHandler() {
-
-
-
-    if (this.state.userAuthorized) {
-      <Link
-        to={{
-          pathname: './profile',
-          state: {
-            token: "",
-            profileId: ""
-          }
-        }} />
+  serverUrl = process.env.REACT_APP_SERVER_URL;
+  
+  state = {
+    user: {},
+      userAuthorized: false,
+      loginVisible: true,
+      pageTitle: "Login",
+      loginFormData: {
+        userName: "",
+        password: ""
+      }
     }
 
+
+  loginHandler = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const requestUrl = `${this.serverUrl}/users/authorize/${this.state.loginFormData.userName}/${this.state.loginFormData.password}`;
+    //console.log("loginHandler()", requestUrl);
+    axios.get(requestUrl)
+      .then(response => {
+        console.log("loginHandler() ===>", response.data.user);
+
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("userId", response.data.user.userId);
+        this.props.dataHandler(response.data.user);
+        const cloneState = this.state;
+        cloneState.userAuthorized = true;
+        cloneState.user = response.data.user;
+        this.setState(cloneState);
+      })
+      .catch(error => console.error(error));
   }
 
-  onSignIn(googleUser) {
-  var profile = googleUser.getBasicProfile();
-  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-  console.log('Name: ' + profile.getName());
-  console.log('Image URL: ' + profile.getImageUrl());
-  console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-}
+
+/**
+ * 
+ * @param {Boolean} status 
+ */
+  loginIsVisile = (status) => {
+    const cloneState = this.state;
+    cloneState.loginVisible = status;
+    cloneState.pageTitle = "Sign up";
+    this.setState(cloneState);
+  }
+
+  changeHandler = (event) => {
+    const cloneState = this.state;
+    cloneState.loginFormData[event.target.name] = event.target.value;
+    this.setState(cloneState);
+    console.debug(event.target.name, event.target.value);
+  }
 
 
   render() {
-    return (
-      <div className="App">
+    let tagToRender;
+    console.log(this.state.user)
+    if (this.state.loginVisible) {
 
-  {/* <a href={googleLoginUrl}>
-    Login with Google
-  </a> */}
+      tagToRender = (
+        <Fragment>
+          {this.state.userAuthorized && <Redirect to={{
+            pathname: "/userDetails",
+            state: {
+              user: this.state.user
+            }
+            
+          }}
+          push />}
+      <form
+      className = "login__form">
+            <label>Username:</label>
+            <input
+              type="text"
+              name="userName"
+              value={this.state.loginFormData.userName}
+              onChange={this.changeHandler}
+              required
+              placeholder="User name" />
 
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              value={this.state.loginFormData.password}
+              onChange={this.changeHandler}
+              required
+              autoComplete="true"
+              aria-current="true"
+              placeholder="Password" />
+            
+            <button className="" type="button" onClick={ this.loginHandler } >
+              Submit
+          </button>
+            
+      </form >
+          <button
+            className="btn signup__btn"
+            onClick={() => this.loginIsVisile(false)}>
+         Sign up
+        </button>
+      </Fragment>);
 
+    }
+    else {
 
-        <form
-          className="login-form"
-          onSubmit={this.loginHandler}>
-          <input
-            type="text"
-            name="userName"
-            value="testUser"
-            placeholder="User name" />
-          <input type="password"
-            value="password"
-            placeholder="Password" />
-          <input type="submit" />
-        </form>
-
-        <div className="g-signin2" data-onsuccess="onSignIn"></div>
-
-        <div className='g-sign-in-button'>
-          <div className='content-wrapper'>
-            <div className='logo-wrapper'>
-              <img src='https://developers.google.com/identity/images/g-logo.png' alt="" />
-            </div>
-              <div className='text-container'>
-                <span>Sign in with Google</span>
-              </div>
-          </div>
-        </div>
+      tagToRender = (
+        <Fragment>
+          <Signup dataHandler={ this.props.dataHandler }/>
+          <button onClick={() => this.loginIsVisile(true)}>Login</button>
+        </Fragment>
           
+      );
+    }
+
+    return (
+      <div className="login__wrapper">
+        <h1 className="title">{ this.state.pageTitle}</h1>
+
+        {tagToRender}
       </div>
     );
   }

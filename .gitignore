@@ -24,6 +24,7 @@ server/node_modules
 /build
 
 # misc
+*.key
 .env
 .DS_Store
 .env.local

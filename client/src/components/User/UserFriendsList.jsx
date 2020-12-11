@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-class ProfileFriendsList extends React.Component {
+class UserFriendsList extends React.Component {
 
     constructor(props) {
         super(props);
@@ -15,14 +15,18 @@ class ProfileFriendsList extends React.Component {
     render() {
         return (
             <div className="App">
-                <div className="profile-list">
-                    <table>
-                    <th></th>
+                <div className="user-list">
+
+                    <ul>
                         {this.state && this.state.items.map(item => {
-                            return <tr key={ item.id }>item.displayName</tr>
+                            return <li key={item.id}>
+
+                                <h1>{item.displayName}</h1>
+                                <img src={item.avatar} alt=""/>
+                                </li>
                             })
                         }
-                    </table>
+                    </ul>
                 </div>
                 
             </div>
@@ -30,4 +34,4 @@ class ProfileFriendsList extends React.Component {
     }
 }
 
-export default ProfileFriendsList;
+export default UserFriendsList;

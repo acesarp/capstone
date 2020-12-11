@@ -5,8 +5,8 @@ const prisma = new PrismaClient();
 
 const populateUserTable = async () => {
 
-    usersArray.users.forEach(async user_ => {
-    
+    for (let i = 0; i < 20; ++i) {
+        let user_ = usersArray.users[i];
         await prisma.user.create({
             data: {
 
@@ -33,7 +33,7 @@ const populateUserTable = async () => {
                 updatedAt: user_.registered.date
             }
         });
-    });
+    }
 }
 
 const populateCommentTable = async () => {
@@ -62,18 +62,18 @@ const populateEventTable = async () => {
         try {
 
             const user = (await prisma.user.findUnique({
-                where: { userId: Math.floor(Math.random() * 800) }
+                where: { userId: Math.floor(Math.random() * 10) }
             }));
             //.catch(error => console.error(error));
 
             const comments = (await prisma.comment.findMany({
-                where: { commentId: Math.floor(Math.random() * 100) },
+                where: { commentId: Math.floor(Math.random() * 10) },
                 take: 5
             }));
             //.catch(error => console.error(error));
             
             const users = (await prisma.user.findMany({
-                where: { userId: Math.floor(Math.random() * 1000) },
+                where: { userId: Math.floor(Math.random() * 10) },
                 take: 5
             }));
             //.catch(error => console.error(error));
@@ -107,14 +107,14 @@ const populateEventTable = async () => {
 
 
 const populateReactionTable = async () => {
-    for (let i = 0; i <= 10; ++i) {
+    for (let i = 0; i <= 15; ++i) {
 
         try {
             const user = await prisma.user.findUnique({
-                where: { userId: Math.floor(Math.random() * 1000) }
+                where: { userId: Math.floor(Math.random() * 10) }
             });
             const comment = await prisma.comment.findUnique({
-                where: { commentId: Math.floor(Math.random() * 100) }
+                where: { commentId: Math.floor(Math.random() * 10) }
             });
             //console.log("comment id: ", comment.commentId);
             await prisma.reaction.create({

@@ -57,13 +57,13 @@ model Reaction {
 
 model User {
   userId           Int        @id @default(autoincrement())
-  username         String
+  username         String     @unique
   password         String
   firstName        String
   lastName         String
   dob              DateTime
   phone            String?
-  email            String     
+  email            String     @unique
   street           String
   city             String
   province_state   String

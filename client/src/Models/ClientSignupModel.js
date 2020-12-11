@@ -12,9 +12,11 @@ export default class ClientSignupModel {
      * @param {string} email
      * @param {string} phone
      * @param {string} gender
-     * @param {string} avatar
+     * @param {string} avatarFileName
+     * @param {Object} avatarBlob
+     * @param {Object} address
      */
-    constructor(userId, userName, password, firstName, lastName, dob, about, email, phone, gender, avatar, address) {
+    constructor(userId, userName, password, firstName, lastName, dob, about, email, phone, gender, avatarFileName, avatarBlob, address) {
 
         this.userId = userId;
         this.userName = userName;
@@ -26,7 +28,8 @@ export default class ClientSignupModel {
         this.email = email;
         this.phone = phone;
         this.gender = gender;
-        this.avatar = avatar;
+        this.avatarFileName = avatarFileName;
+        this.avatarBlob = avatarBlob;
         this.address = address;
     };
 
@@ -42,7 +45,8 @@ export default class ClientSignupModel {
             email: this.email,
             phone: this.phone,
             gender: this.gender,
-            avatar: this.avatar,
+            avatarFileName: this.avatarFileName,
+            avatarBlob: this.avatarBlob,
             address: this.address
         });
     }
@@ -59,7 +63,8 @@ export default class ClientSignupModel {
             email: this.email,
             phone: this.phone,
             gender: this.gender,
-            avatar: this.avatar,
+            avatarFileName: this.avatarFileName,
+            avatarBlob: this.avatarBlob,
             address: this.address
         };
     }
