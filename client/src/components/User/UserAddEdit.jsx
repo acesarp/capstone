@@ -1,68 +1,62 @@
 
 import React from 'react';
-import axios from 'axios';
-import ClientUserModel from '../../Models/ClientSignupModel';
+import { getUserData, postUser } from '../../authorizationScripts';
+
+import ClientUserModel from '../../Models/ClientModel';
 import { Redirect } from 'react-router-dom';
 
 class UserAddEdit extends React.Component {
-    serverUrl = process.env.REACT_APP_SERVER_URL
+
 
     constructor(props) {
         super(props);
         console.info("UserAddEdit props: ", this.props);
-        this.state = {
-            isLoggedIn: this.props.isloggedIn ?? false,
-            userId: (this.props.location && this.props.location.state.id) ?? "",
-            formData: {
-                userName: "Allen22",
-                password: "p@$$w0rd",
-                firstName: "Guelph",
-                lastName: "Allen",
-                dob: "1957-02-10",
-                email: "all@email.ca",
-                phone: "555-555-5555",
-                gender: "male",
-                about: "Me me me",
-                avatar: "",
-                street: "Fake st",
-                city: "Seattle",
-                provincestate: "AL",
-                country: "France"
-            }
-        };
+
+		this.state.formData = {
+			userName: "Allen42",
+			password: "p@$$w0rd",
+			firstName: "Guelph",
+			lastName: "Allemm",
+			dob: "1957-02-10",
+			email: "all57@email.ca",
+			phone: "555-555-5555",
+			gender: "male",
+			about: "Me me me",
+			avatar: "",
+			street: "Fake st",
+			city: "Seattle",
+			provincestate: "AL",
+			country: "France"
+		}
     }
 
     async componentDidMount() {
-        console.log("User: ", this.state.userId);
-        if (!this.state.userId) return;
-        try {
-            console.log("Getting user...");
-            const response = await axios.get(`${this.serverUrl}/users/${this.state.userId}`);
-            const resObj = response.data[0];
-            const cloneState = this.state;
-            cloneState.formData = {
-                userName: resObj.userName,
-                firstName: resObj.firstName,
-                lastName: resObj.lastName,
-                password: resObj.password,
-                dob: resObj.dob,
-                email: resObj.email,
-                phone: resObj.phone,
-                gender: resObj.gender,
-                avatar: resObj.avatar,
-                about: resObj.about,
-                street: resObj.street,
-                city: resObj.city,
-                provincestate: resObj.provincestate,
-                country: resObj.country
-            };
-            this.setState(cloneState);
-            //console.log(cloneState.formData);
+        console.log("User: ", this.props.userId);
+        // If there's no userId a new user will be created (Signup)
+        // no need to populate the form
+        if (!this.props.userId) return; 
 
-        }
-        catch (error) {
-            console.error(error);
-        }
+        getUserData(this.props.userId, sessionStorage.getTtem("token"))
+        let cloneState = this.state;
+        cloneState.formData = {
+            userName: this.props.user.userName,
+            firstName: this.props.user.firstName,
+            lastName: this.props.user.lastName,
+            password: this.props.user.password,
+            dob: this.props.user.dob,
+            email: this.props.user.email,
+            phone: this.props.user.phone,
+            gender: this.props.user.gender,
+            avatar: this.props.user.avatar,
+            about: this.props.user.about,
+            street: this.props.user.street,
+            city: this.props.user.city,
+            provincestate: this.props.user.provincestate,
+            country: this.props.user.country
+        };
+        this.setState(cloneState);
+        //console.log(cloneState.formData);
+
     }
     /**
      * 
@@ -79,7 +73,7 @@ class UserAddEdit extends React.Component {
                 let reader = new FileReader();
                 reader.readAsDataURL(data.get("avatar"));
 
-                reader.onload = ((resolve_) => {
+                reader.onload = (() => {
                     //console.log(resolve_.loaded);
                     resolve(reader.result);
                 });
@@ -109,39 +103,19 @@ class UserAddEdit extends React.Component {
 
             //console.log(model.toJSON());
 
-            const method = this.state.id ? "PUT" : "POST"; // if no id is passed, POST will be used to create new record
-            axios({
-                method: method,
-                url: `${this.serverUrl}/users`,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data: model.toJSON()
-            })
-                .then(response => {
-                    console.info(response.data.newUser.userId);
-                    this.setUpAuthorization(response.data.token, response.data.newUser.userId);
-                    method === "POST" ?? this.props.dataHandler(this.state.newUser);
-                    event.target.reset();
-                })
-                .catch(error => console.error(error));
+            const result = postUser(model);
+            const cloneState = this.state;
+            cloneState.user = result.user;
+            cloneState.isLoggedIn = true;
+            this.setState(cloneState);
+            event.target.reset();
+            
         }
         catch (error) {
             console.error("formSubmitHandler() => ", error);
         }
 
-    };
-
-    setUpAuthorization(token, userId) {
-        localStorage.setItem('token', token);
-        localStorage.setItem('userId', userId);
-
-        const cloneState = this.state;
-        cloneState.isLoggedIn = true;
-        this.setState(cloneState);
     }
-
-
 
     changeHandler = (event) => {
         const cloneState = this.state;
@@ -149,7 +123,6 @@ class UserAddEdit extends React.Component {
         cloneState.formData[event.target.name] = event.target.value;
         this.setState(cloneState);
     };
-
 
     render() {
         //console.log(this.state)

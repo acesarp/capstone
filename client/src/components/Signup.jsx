@@ -5,19 +5,8 @@ import axios from 'axios';
 import UserAddEdit from './User/UserAddEdit';
 
 class Signup extends React.Component {
-  serverUrl = process.env.REACT_APP_SERVER_URL;
+
   
-    state = {
-      loginVisible: true,
-      pageTitle: "Signup",
-      loginFormData: {
-        userName: "",
-        password: ""
-      }
-    }
-
-  formVisible = false;
-
 
   signupHandler(event) {
     event.perventDefault();
@@ -39,18 +28,11 @@ class Signup extends React.Component {
 
   }
 
-    changeHandler = (event) => {
-    const cloneState = this.state;
-    cloneState.loginFormData[event.target.name] = event.target.value;
-    this.setState(cloneState);
-    console.debug(event.target.name, event.target.value);
-  }
-
-
   render() {
     return (
       <div className="sign-up-wrapper">
-        <UserAddEdit dataHandler={ this.props.dataHandler }/>
+        <h1> Sign up </h1>
+        <UserAddEdit dataHandler={ this.props.authHandler }/>
       </div>
     );
   }

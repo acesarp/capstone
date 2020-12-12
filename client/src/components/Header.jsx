@@ -10,75 +10,42 @@ const serverUrl = process.env.REACT_APP_SERVER_URL;
 class Header extends React.Component {
 
 
-  constructor(props) {
-    super(props);
-    console.log(props)
-    this.state = {
-      
-      search: "",
-      user: props.user,
-      isUserLoggedIn: true,
-      buttonLabel: "Log out"
-    }
-  }
+	constructor(props) {
+    	super(props);
+    	console.log(props);
 
-  logoutHandler(event) {
+		this.state = {
+			search: "",
+			buttonLabel: "Log out"
+		}
+	}
 
-    axios.get(`${serverUrl}/users/logout/${this.state.user.userId}`)
-      .then(response => {
-        if(response.status === 200){
-          localStorage.removeItem("token");
-          localStorage.removeItem("userId");
-          
-          const cloneState = this.state;
-          cloneState.isUserLoggedIn = false;
-          this.setState(cloneState);
-        }
-      })
-      .catch(error => console.log(error));
-  }
 
-  changeHandler = (event) => {
-    let cloneState = this.state;
-    let keyword = event.target.value;
-    cloneState[event.target.name] = event.target.value;
-    this.setState(cloneState);
-    const queryUrl = `${process.env.REACT_APP_SERVER_URL}/users/friends/${localStorage.getItem("userId")}/${localStorage.getItem("token")}/${keyword}`;
-    //console.info(queryUrl);
-    axios.get(queryUrl)
-    .then(response => {
-      console.log(response.data);
-      cloneState = this.state;
-      cloneState.friends = response.data;
-      this.setState(cloneState);
-      console.debug(this.state.friends);
-    })
-    .catch (error => console.error(error));
-
-  }
 
   render() {
 
     let tagToRender;
 
-    if (this.state.isUserLoggedIn) {
-      tagToRender = (<div>
-        <img className="header__avatar" src={`${serverUrl}/pictures/${this.state.user.picture_med}/`} alt="" />
-        <span>{this.state.user.displayname}</span>
+    if (this.props.loginStatus) {
+		tagToRender = (<div>
+			<img
+				className="header__avatar"
+				src={`${serverUrl}/pictures/${this.props.user.picture_med}/`}
+				alt="" />
+        	<span>{this.props.user.displayname}</span>
         <form>
           <input
-          name="search"
-          className="header__btn"
-            onChange={this.changeHandler}
+			name="search"
+			className="header__btn"
+            onChange={this.props.searchHandler}
             placeholder="Search..."
-          value={ this.state.value } />
-          </form>
+			value={ this.state.value } />
+        </form>
         <button
-          className="header__btn"
-            onClick={this.logoutHandler}>
+			className="header__btn"
+            onClick={this.props.logoutHandler}>
           {this.state.buttonLabel}
         </button>
-        { this.state.friends && <UserFriendsList friends={this.state.friends} /> }
       </div>);
     }
     else {

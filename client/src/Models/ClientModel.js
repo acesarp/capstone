@@ -1,4 +1,4 @@
-export default class ClientSignupModel {
+export default class ClientModel {
 
     /**
      * 

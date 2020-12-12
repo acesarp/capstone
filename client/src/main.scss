@@ -27,6 +27,7 @@ $border_radius_std: 3px;
 
 body {
   margin: 0;
+  padding: 0;
   min-width: 320px;
 }
 label {
@@ -67,8 +68,8 @@ input {
 }
 
 a {
-  text-decoration: none;
-  color: $text_color;
+    text-decoration: none;
+    color: $text_color;
 }
 
 .header {
@@ -106,6 +107,11 @@ margin: 0;
         justify-content: space-between;
     }
 
+}
+
+.app {
+    display: flex;
+    flex-direction: column;
 }
 
 .side-bar {
@@ -151,6 +157,7 @@ margin: 0;
 .user-details {
     margin: auto;
     &__wrapper {
+        width: 90%;
         display: flex;
         margin: auto;
         
@@ -162,7 +169,7 @@ margin: 0;
         margin: 3rem auto;
     }
     &__list {
-        width: 100vw;
+        width: 100%;
         padding: 0 2rem;
         &--item {
             border-radius: $border_radius_std;
@@ -175,7 +182,7 @@ margin: 0;
         border-radius: 1rem;
         &-wrapper {
             width: fit-content;
-            margin: 20px;
+            margin: 1.5rem;
         }
     }
     &__label{
@@ -193,6 +200,7 @@ margin: 0;
     @include tablet{ 
 
     }
+
     @include desktop {
         &__profile {
             padding: 2rem;;

@@ -7,6 +7,7 @@
 
 body {
   margin: 0;
+  padding: 0;
   min-width: 320px;
 }
 
@@ -171,6 +172,7 @@ a {
 }
 
 .user-details__wrapper {
+  width: 90%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -186,7 +188,7 @@ a {
 }
 
 .user-details__list {
-  width: 100vw;
+  width: 100%;
   padding: 0 2rem;
 }
 
@@ -206,7 +208,7 @@ a {
   width: -webkit-fit-content;
   width: -moz-fit-content;
   width: fit-content;
-  margin: 20px;
+  margin: 1.5rem;
 }
 
 .user-details__label {
