@@ -1,21 +1,26 @@
 
 import './main.css';
 import React from 'react';
-import Header from './components/Header';
+import Header from './components/Header/Header';
 import Login from './components/Login';
 import UserDetails from './components/User/UserDetails';
 import { authorizeUser, logout } from './authorizationScripts';
-import { BrowserRouter , Route, Switch, withRouter } from 'react-router-dom';
+import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import UserAddEdit from './components/User/UserAddEdit';
-import UserFriendsList from './components/User/UserDetails';
+//import UserFriendsList from './components/User/UserDetails';
 import Signup from './components/Signup';
 import axios from 'axios';
+import dotenv from 'dotenv';
+import ModalSearch from './components/Header/ModalSearch';
+dotenv.config();
 class App extends React.Component {
 
 	state = {
 		isLoggedIn: false,
 		userId: -1,
 		user: {},
+		searchMode: false,
+		friends: []
 	};
 
 	componentDidMount() {
@@ -47,19 +52,14 @@ class App extends React.Component {
 		const user = await authorizeUser(event.userName, event.password);
 		//console.table(user);
 		if (!user) { 
+			return (<Redirect to="/login" />);
 			//========> redirect TODO;
 		}
 		const cloneState = this.state;
 		cloneState.isLoggedIn = sessionStorage.getItem("isloggedIn");
 		cloneState.user = user;
 		this.setState(cloneState);
-						this.props.history.push("/userDetails");
-	}
-
-	searchHandler = (event) => {
-		const cloneState = this.state;
-		cloneState.friends = event.target.friends;
-		this.setState(cloneState);
+		this.props.history.push("/userDetails");
 	}
 
 	logoutHandler = () => {
@@ -70,31 +70,49 @@ class App extends React.Component {
 		this.setState(cloneState);
 	}
 
+	/**
+	 *  Search event handler
+	 * @param {*} event 
+	 */
 	searchHandler = (event) => {
 		let cloneState = this.state;
 		let keyword = event.target.value;
-		cloneState[event.target.name] = event.target.value;
+		cloneState[event.target.name] = keyword;
+		console.log(keyword, this.state.friends, this.state.searchMode);
 		
-		const queryUrl = `${process.env.REACT_APP_SERVER_URL}/users/friends/${sessionStorage.getItem("userId")}/${sessionStorage.getItem("token")}/${keyword}`;
-		//console.info(queryUrl);
-		axios.get(queryUrl)
-		.then(response => {
-			console.log(response.data);
+		if (keyword !== "") {
+			const queryUrl = `${process.env.REACT_APP_SERVER_URL}/users/friends/${sessionStorage.getItem("userId")}/${sessionStorage.getItem("token")}/${keyword}`;
+			//console.info(queryUrl);
 			
-			cloneState = this.state;
-			cloneState.friends = response.data;
+			axios.get(queryUrl)
+			.then(response => {
+				cloneState.friends = response.data;
+				
+				cloneState.searchMode = response.data === [] ? false : true;
+				console.log("response data ---- " + response.data);
+				//console.dir(response);
+				this.setState(cloneState);
 
-			console.table(cloneState);
-			
+			})
+			.catch(error => {
+			console.error(error);
+				cloneState.searchMode = false;
+				cloneState.friends = [];
+				this.setState(cloneState);
+			});
+		}
+		else {
+			cloneState.searchMode = false;
+			cloneState.friends = [];
 			this.setState(cloneState);
+		}
 
-		})
-		.catch (error => console.error(error));
+		
 
-  }
+
+	}
 
 	render() {
-		
 
 		return (
 
@@ -104,7 +122,9 @@ class App extends React.Component {
 					user={this.state.isLoggedIn && this.state.user}
 					searchHandler={this.searchHandler}
 					logoutHandler={this.logoutHandler}
-				/> 
+				/>
+
+				{ this.state.searchMode && <ModalSearch friends={this.state.friends} /> }
 
 
 			<Switch>
@@ -114,8 +134,8 @@ class App extends React.Component {
 						<Login loginHandler={ this.loginHandler }/>
 				</Route>
             
-				<Route path="/userAddEdit" render={(props) => <UserAddEdit {...props} />} />			
-				<Route path="/userDetails" render={(props) => <UserDetails {...props} user={this.state.user} friends={this.state.friends} />} />
+				<Route path="/userAddEdit" render={(props) => <UserAddEdit {...props} user={this.state.user} />} />			
+				<Route path="/userDetails" render={(props) => <UserDetails {...props} user={this.state.user} friends={[]} />} />
 						{/* {tag}
 						{ this.state.friends && <UserFriendsList friends={this.state.friends} />} */}
 

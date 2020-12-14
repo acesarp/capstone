@@ -1,62 +1,58 @@
 
 import React from 'react';
 import { getUserData, postUser } from '../../authorizationScripts';
-
-import ClientUserModel from '../../Models/ClientModel';
-import { Redirect } from 'react-router-dom';
+import ClientModel from '../../Models/ClientModel';
+import { Redirect, withRouter } from 'react-router-dom';
 
 class UserAddEdit extends React.Component {
 
 
     constructor(props) {
         super(props);
-        console.info("UserAddEdit props: ", this.props);
+        let dob_ =new Date(this.props.user.dob).toString().substr(0, 10)
+        console.info(dob_);
 
-		this.state.formData = {
-			userName: "Allen42",
-			password: "p@$$w0rd",
-			firstName: "Guelph",
-			lastName: "Allemm",
-			dob: "1957-02-10",
-			email: "all57@email.ca",
-			phone: "555-555-5555",
-			gender: "male",
-			about: "Me me me",
-			avatar: "",
-			street: "Fake st",
-			city: "Seattle",
-			provincestate: "AL",
-			country: "France"
+        this.state = { // mock data
+            formData: {
+                username: this.props.user.username,
+                firstName: this.props.user.firstName,
+                lastName: this.props.user.lastName,
+                password: this.props.user.password,
+                dob: dob_,
+                email: this.props.user.email,
+                phone: this.props.user.phone,
+                gender: this.props.user.gender,
+                //avatar: this.props.user.avatar,
+                about: this.props.user.about,
+                street: this.props.user.street,
+                city: this.props.user.city,
+                province_state: this.props.user.province_state,
+                country: this.props.user.country
+                //username: "Allen42",
+                // password: "p@$$w0rd",
+                // firstName: "Guelph",
+                // lastName: "Allemm",
+                // dob: "1957-02-10",
+                // email: "all57@email.ca",
+                // phone: "555-555-5555",
+                // gender: "male",
+                // about: "Me me me",
+                // avatar: "",
+                // street: "Fake st",
+                // city: "Seattle",
+                // province_state: "AL",
+                // country: "France"
+            }
 		}
     }
 
     async componentDidMount() {
-        console.log("User: ", this.props.userId);
+        console.log("user: ", this.props.user);
         // If there's no userId a new user will be created (Signup)
         // no need to populate the form
-        if (!this.props.userId) return; 
+        if (!this.props.user.userId) return; 
 
-        getUserData(this.props.userId, sessionStorage.getTtem("token"))
-        let cloneState = this.state;
-        cloneState.formData = {
-            userName: this.props.user.userName,
-            firstName: this.props.user.firstName,
-            lastName: this.props.user.lastName,
-            password: this.props.user.password,
-            dob: this.props.user.dob,
-            email: this.props.user.email,
-            phone: this.props.user.phone,
-            gender: this.props.user.gender,
-            avatar: this.props.user.avatar,
-            about: this.props.user.about,
-            street: this.props.user.street,
-            city: this.props.user.city,
-            provincestate: this.props.user.provincestate,
-            country: this.props.user.country
-        };
-        this.setState(cloneState);
-        //console.log(cloneState.formData);
-
+        getUserData(this.props.userId, sessionStorage.getItem("token"));
     }
     /**
      * 
@@ -80,9 +76,9 @@ class UserAddEdit extends React.Component {
             });
 
             //console.table(imageBase64);
-            const model = new ClientUserModel(
+            const model = new ClientModel(
                 this.state.userId,
-                data.get("userName").toString(),
+                data.get("username").toString(),
                 data.get("password").toString(),
                 data.get("firstName").toString(),
                 data.get("lastName").toString(),
@@ -96,7 +92,7 @@ class UserAddEdit extends React.Component {
                 {
                     street: data.get("street").toString(),
                     city: data.get("city").toString(),
-                    provincestate: data.get("provincestate").toString(),
+                    province_state: data.get("province_state").toString(),
                     country: data.get("country").toString()
                 }
             );
@@ -150,8 +146,9 @@ class UserAddEdit extends React.Component {
                         <input
                             className="form__input"
                             type="text"
-                            name="userName"
-                            value={this.state.formData.userName}
+                            name="username"
+                            placeholder="Username"
+                            value={this.state.formData.username}
                             onChange={this.changeHandler} />
 
                     </div>
@@ -161,6 +158,7 @@ class UserAddEdit extends React.Component {
                             className="form__input"
                             type="text"
                             name="password"
+                            placeholder="Enter password"
                             value={this.state.formData.password}
                             onChange={this.changeHandler} />
                     </div>
@@ -170,6 +168,7 @@ class UserAddEdit extends React.Component {
                             className="form__input"
                             type="text"
                             name="firstName"
+                            placeholder="First name"
                             value={this.state.formData.firstName}
                             onChange={this.changeHandler} />
                     </div>
@@ -180,6 +179,7 @@ class UserAddEdit extends React.Component {
                             className="form__input"
                             type="text"
                             name="lastName"
+                            placeholder="Last name"
                             value={this.state.formData.lastName}
                             onChange={this.changeHandler} />
                     </div>
@@ -200,6 +200,7 @@ class UserAddEdit extends React.Component {
                             className="form__input"
                             type="email"
                             name="email"
+                            placeholder="Enter your email"
                             value={this.state.formData.email}
                             onChange={this.changeHandler} />
                     </div>
@@ -228,7 +229,9 @@ class UserAddEdit extends React.Component {
                     <div className="form-group">
                         <label className="form__label"> About </label>
 
-                        <input
+                        <textarea
+                            aria-multiline="true"
+                            maxLength="600"
                             className="form__input"
                             type="text"
                             name="about"
@@ -238,7 +241,9 @@ class UserAddEdit extends React.Component {
                     </div>
                     <div className="form-group">
                         <label className="form__label"> Avatar </label>
-
+                        <div>
+                            <img src={ this.props.user.avatar } alt="avatar to upload"/>
+                        </div>
                         <input className="form__input"
                             type="file"
                             accept="image/jpg, image/png, image/jpeg, image/gif, image/x-png"
@@ -249,37 +254,55 @@ class UserAddEdit extends React.Component {
                     </div>
                     <div className="form-group">
 
-                        <label className="form__label"> Address </label>
+                        <label className="form__label"> Address 
+                            
+                            <label className="form__label">street</label>
                         <input className="form__input"
                             type="text"
                             name="street"
                             value={this.state.formData.street}
-                            onChange={this.changeHandler} />
-
+                                onChange={this.changeHandler} />
+                            
+                        <label className="form__label">City</label>
                         <input className="form__input"
                             type="text"
                             name="city"
+                            placeholder="Enter City"
                             value={this.state.formData.city}
                             onChange={this.changeHandler} />
-
+                            
+                        <label className="form__label">Province or State</label>
                         <input className="form__input"
                             type="text"
-                            name="provincestate"
-                            value={this.state.formData.provincestate}
-                            onChange={this.changeHandler} />
-
+                                name="province_state"
+                                placeholder="Enter Province/State"
+                            value={this.state.formData.province_state}
+                                onChange={this.changeHandler} />
+                            
+                            <label className="form__label">Country</label>
                         <input className="form__input"
                             type="text"
                             name="country"
-                            value={this.state.formData.country}
+                                value={this.state.formData.country}
+                                placeholder="Enter Country"
                             onChange={this.changeHandler} />
+                        </label>
                     </div>
-
+                    <div className="button-group">
                     <button
                         className="btn"
                         type="submit"
-                        value="submit" >Save</button>
-
+                        value="submit" >
+                        Save
+                    </button>
+                    <button
+                        onClick={ () => {this.props.history.goBack()} }
+                        className="btn"
+                        type="button"
+                        value="cancel" >
+                            Back
+                    </button>
+                        </div>
                 </form>
 
             </div>
@@ -287,4 +310,4 @@ class UserAddEdit extends React.Component {
     }
 }
 
-export default UserAddEdit;
+export default withRouter(UserAddEdit);

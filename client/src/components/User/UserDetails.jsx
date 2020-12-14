@@ -1,7 +1,7 @@
 
-import axios from 'axios';
+//import axios from 'axios';
 import React from 'react';
-import { Redirect, BrowserRouter , Route } from 'react-router-dom';
+//import { Redirect, BrowserRouter , Route } from 'react-router-dom';
 class UserDetails extends React.Component {
 
     constructor(props) {
@@ -24,14 +24,10 @@ class UserDetails extends React.Component {
         //     .catch (error => console.error(error));
     }
 
-    editHandler = () => {
+    editHandler = (event) => {
+        console.log(event.target);
         return (
-                <Redirect to={{
-                    pathname: "/userAddEdit",
-                    props: {
-                        user: this.props.user
-                    }
-                }}/>
+            this.props.history.push( "/userAddEdit")
         );
     }
 
@@ -57,7 +53,20 @@ class UserDetails extends React.Component {
                         <li className="user-details__list--item" >
                             <div className="user-details__label">Last name</div>
                             <p className="user-details__field">{this.props.user.lastName}</p>
+                    </li>
+                                            <li className="user-details__list--item" >
+                            <div className="user-details__label">Email</div>
+                            <p className="user-details__field"> {this.props.user.email}</p>
                         </li>
+                                            <li className="user-details__list--item" >
+                            <div className="user-details__label">Gender</div>
+                            <p className="user-details__field"> {this.props.user.gender}</p>
+                    </li>
+                                                                <li className="user-details__list--item" >
+                            <div className="user-details__label">Phone number</div>
+                            <p className="user-details__field"> {this.props.user.phone}</p>
+                        </li>
+
 
                         <li className="user-details__list--item" >
                             <div className="user-details__label">Date of Birth</div>
@@ -67,23 +76,28 @@ class UserDetails extends React.Component {
                         <li className="user-details__list--item" >
                             <div className="user-details__label">About</div>
                             <p className="user-details__field"> {this.props.user.about}</p>
+                    </li>
+                        <li className="user-details__list--item">Addres:
+                         <div className="user-details__list--item" >
+                            <div className="user-details__label">City</div>
+                            <p className="user-details__field"> {this.props.user.city}</p>
+                        </div>
+                            <div className="user-details__list--item" >
+                            <div className="user-details__label">Province/State</div>
+                            <p className="user-details__field"> {this.props.user.province_state}</p>
+                        </div>
+                            <div className="user-details__list--item" >
+                            <div className="user-details__label">Country</div>
+                            <p className="user-details__field"> {this.props.user.country}</p>
+                        </div>
                         </li>
                     </ul>
-                    <button className="user-details__edit-btn" onClick={this.editHandler}>Edit Profile</button>
+                <button
+                    className="user-details__edit-btn"
+                    onClick={this.editHandler}>
+                    Edit Profile
+                </button>
                 </div>
-
-                <div className="user-list">
-                    <ul>
-                        {this.props.friends && this.props.friends.map(item => {
-                            return <li key={item.id}>
-                                <div>{item.displayName}</div>
-                                <div>{item.about}</div>
-                            </li>;
-                        })
-                        }
-                    </ul>
-                </div>
-
             </div>;
     
         return tag || <></>;
