@@ -10,7 +10,7 @@ class UserAddEdit extends React.Component {
     constructor(props) {
         super(props);
         let dob_ =new Date(this.props.user.dob).toString().substr(0, 10)
-        console.info(dob_);
+        console.info(props);
 
         this.state = { // mock data
             formData: {
@@ -124,7 +124,7 @@ class UserAddEdit extends React.Component {
         //console.log(this.state)
         return (
 
-            <div className="form-user__wrapper">
+            <div className="form__wrapper">
                 {this.state.isLoggedIn && <Redirect to={{
                     pathname: "/userDetails",
                     state: {
@@ -134,13 +134,12 @@ class UserAddEdit extends React.Component {
                 }}
                 push /> }
                     
-                <h1>{this.props.pagetitle}</h1>
-
+                <h1>{this.state.isLoggedIn && "Edit profile"}</h1>
                 <form
                     className="from-user"
                     onSubmit={this.formSubmitHandler}>
 
-                    <div className="form-group">
+                    <div className="form__group">
 
                         <label className="form__label"> User name </label>
                         <input
@@ -152,7 +151,7 @@ class UserAddEdit extends React.Component {
                             onChange={this.changeHandler} />
 
                     </div>
-                    <div className="form-group">
+                    <div className="form__group">
                         <label className="form__label"> Password</label>
                         <input
                             className="form__input"
@@ -162,7 +161,7 @@ class UserAddEdit extends React.Component {
                             value={this.state.formData.password}
                             onChange={this.changeHandler} />
                     </div>
-                    <div className="form-group">
+                    <div className="form__group">
                         <label className="form__label"> First name </label>
                         <input
                             className="form__input"
@@ -172,7 +171,7 @@ class UserAddEdit extends React.Component {
                             value={this.state.formData.firstName}
                             onChange={this.changeHandler} />
                     </div>
-                    <div className="form-group">
+                    <div className="form__group">
                         <label className="form__label">  Last Name</label>
 
                         <input
@@ -184,7 +183,7 @@ class UserAddEdit extends React.Component {
                             onChange={this.changeHandler} />
                     </div>
 
-                    <div className="form-group">
+                    <div className="form__group">
                         <label className="form__label"> Date of Birth</label>
                         <input
                             className="form__input"
@@ -194,7 +193,7 @@ class UserAddEdit extends React.Component {
                             onChange={this.changeHandler} />
                     </div>
 
-                    <div className="form-group">
+                    <div className="form__group">
                         <label className="form__label"> Email </label>
                         <input
                             className="form__input"
@@ -205,7 +204,7 @@ class UserAddEdit extends React.Component {
                             onChange={this.changeHandler} />
                     </div>
 
-                    <div className="form-group">
+                    <div className="form__group">
                         <label className="form__label"> Phone number</label>
                         <input
                             className="form__input"
@@ -215,7 +214,7 @@ class UserAddEdit extends React.Component {
                             onChange={this.changeHandler} />
 
                     </div>
-                    <div className="form-group">
+                    <div className="form__group">
                         <label className="form__label"> Gender </label>
 
                         <input
@@ -226,7 +225,7 @@ class UserAddEdit extends React.Component {
                             onChange={this.changeHandler} />
 
                     </div>
-                    <div className="form-group">
+                    <div className="form__group">
                         <label className="form__label"> About </label>
 
                         <textarea
@@ -239,7 +238,7 @@ class UserAddEdit extends React.Component {
                             onChange={this.changeHandler} />
 
                     </div>
-                    <div className="form-group">
+                    <div className="form__group">
                         <label className="form__label"> Avatar </label>
                         <div>
                             <img src={ this.props.user.avatar } alt="avatar to upload"/>
@@ -252,7 +251,7 @@ class UserAddEdit extends React.Component {
                             onChange={this.changeHandler} />
 
                     </div>
-                    <div className="form-group">
+                    <div className="form__group">
 
                         <label className="form__label"> Address 
                             

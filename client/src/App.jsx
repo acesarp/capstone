@@ -72,7 +72,7 @@ class App extends React.Component {
 
 	/**
 	 *  Search event handler
-	 * @param {*} event 
+	 * @param {Event} event 
 	 */
 	searchHandler = (event) => {
 		let cloneState = this.state;
@@ -136,8 +136,6 @@ class App extends React.Component {
             
 				<Route path="/userAddEdit" render={(props) => <UserAddEdit {...props} user={this.state.user} />} />			
 				<Route path="/userDetails" render={(props) => <UserDetails {...props} user={this.state.user} friends={[]} />} />
-						{/* {tag}
-						{ this.state.friends && <UserFriendsList friends={this.state.friends} />} */}
 
 				<Route path="/signup" render={ (props) => <Signup {...props} /> } />  
 			</Switch>

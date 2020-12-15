@@ -44,17 +44,18 @@ class Login extends React.Component {
 
 
 	render() {
-    	let tagToRender;
-    	console.log(this.state.user)
-    	if (this.state.loginVisible) {
+		let tagToRender;
+		//console.log(this.state.user)
 
-    		tagToRender = (
-        	<Fragment>
+		if (this.state.loginVisible) {
+
+			tagToRender = (
+				<Fragment>
 				<form
 					onSubmit={ this.loginHandler }
 					className = "login__form">
-            		<label>Username:</label>
-            		<input
+					<label>Username:</label>
+					<input
 						type="text"
 						name="userName"
 						value={this.state.loginFormData.userName}
