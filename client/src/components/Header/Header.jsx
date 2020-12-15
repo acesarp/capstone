@@ -2,7 +2,7 @@
 
 import React from 'react';
 import logo from '../../assets/images/logo-transparent.png';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 //import UserFriendsList from '../User/UserFriendsList';
 
 class Header extends React.Component {
@@ -23,12 +23,12 @@ class Header extends React.Component {
 					!this.props.loginStatus && <Redirect to="/login" />
 				}
 				<div className="header__inner-wrapper--col-container-1">
-						<div className="header__logo-wrapper">
-							<img className="header__logo" src={logo} alt="logo" />
+					<div className="header__logo-wrapper">
+							<Link to={this.props.loginStatus ? "/userDetails" : "#" }> <img className="header__logo" src={logo} alt="logo" /> </Link>
 						</div>
 					{
 						this.props.loginStatus &&
-						<div className="header__inner-wrapper--col-1">
+						<div className="header__inner-wrapper--col-1" onClick={ this.props.history && this.props.history.push('/userDetails')}>
 							<p className="header__text" >{this.props.user.displayName}</p>
 							<div className="header__avatar--wrapper">
 								<img
@@ -42,6 +42,9 @@ class Header extends React.Component {
 				<div className="header__inner-wrapper--col-container-2">
 
 					<div className="header__inner-wrapper--col-2" >
+						{
+							this.props.loginStatus &&
+							<>
 						<form className="header__search--form">
 							<input
 								name="search"
@@ -50,13 +53,13 @@ class Header extends React.Component {
 								placeholder="Search people..."
 								value={this.props.value} />
 						</form>
-						{
-							this.props.loginStatus &&
+
 							<button
 								className="header__btn"
 								onClick={this.props.logoutHandler}>
 								{this.buttonLabel}
-							</button>
+								</button>
+								</>
 						}
 					</div>
 				</div>

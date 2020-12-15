@@ -2,6 +2,7 @@ import React from 'react';
 
 class ModalSearch extends React.Component {
 
+
   render() {
 
     return (
@@ -9,19 +10,25 @@ class ModalSearch extends React.Component {
             {this.props.friends &&
                 
                 <div className="modal__wrapper">
-                    <div className="modal__content">
+                <h1>Search results:</h1>
+                <div className="modal__content">
+
                     <ul className="modal__list">
                         {this.props.friends.map(item => {
                             return (
-                                <li key={item.userId} className="modal__item" >
-                                    <span>
-                                        {item.firstName} {item.lastname}
-                                    </span>
+                                <li key={item.userId} className="modal__item"  onClick={ () => this.props.friendDetailsHandler(item.userId) }>
+                                    <div>
+                                        {item.firstName}
+                                    </div>
+                                    <div>
+                                        {item.lastName}
+                                    </div>
                                     <div>
                                         <img className="friend__avatar" src={item.picture_med} alt="avatar" />
                                     </div>
                             
-                            </li>);
+                                </li>
+                            );
                         })}
                     </ul>
                     </div>

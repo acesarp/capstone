@@ -5,13 +5,13 @@ const router = express.Router();
 /**
  * 
  */
-router.route('/').post((req, res) => {
-    Friend.where(req.query)
-        .fetchAll({ withRelated: ['profile'] })
-        .then((friends) => {
-            res.status(200).json(friends);
-        });
-});
+// router.route('/').post((req, res) => {
+//     Friend.where(req.query)
+//         .fetchAll({ withRelated: ['profile'] })
+//         .then((friends) => {
+//             res.status(200).json(friends);
+//         });
+// });
 
 
 module.exports = router;

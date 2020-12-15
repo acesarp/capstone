@@ -2,8 +2,8 @@ const httpProxy = require('http-proxy');
 const fs = require('fs');
 
 let hostname = 'mac.guto.ca';
-let sslKey = 'localurl.key';
-let sslCrt = 'localurl.crt';
+let sslKey = './setupFiles/localurl.key';
+let sslCrt = './setupFiles/localurl.crt';
 
 const proxy = httpProxy
     .createProxyServer({

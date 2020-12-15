@@ -9,6 +9,9 @@
 *.txt
 *.crt
 *.key
+*.mwb
+*.mwb.bak
+
 client/.eslintcache
 # dependencies
 /node_modules
@@ -24,6 +27,7 @@ server/node_modules
 /build
 
 # misc
+*.eslintcache
 .eslintcache
 *.key
 .env

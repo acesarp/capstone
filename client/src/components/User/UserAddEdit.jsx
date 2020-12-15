@@ -3,6 +3,7 @@ import React from 'react';
 import { getUserData, postUser } from '../../authorizationScripts';
 import ClientModel from '../../Models/ClientModel';
 import { Redirect, withRouter } from 'react-router-dom';
+import BackIcon from '../../assets/images/icons/color-icons/png/back-icon.png';
 
 class UserAddEdit extends React.Component {
 
@@ -133,8 +134,13 @@ class UserAddEdit extends React.Component {
                     }
                 }}
                 push /> }
-                    
-                <h1>{this.state.isLoggedIn && "Edit profile"}</h1>
+                        <div
+                            className="user-details__edit-btn"
+                            // onClick={this.props.history && this.props.history.goBack()}
+                        >
+                            <img className="icon user-details__edit--icon" src={BackIcon} alt="" />
+                        </div>
+                <h1>Edit profile</h1>
                 <form
                     className="from-user"
                     onSubmit={this.formSubmitHandler}>

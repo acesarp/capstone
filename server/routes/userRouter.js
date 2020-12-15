@@ -9,6 +9,83 @@ const mkdirp = require('mkdirp');
 const jwt = require('jsonwebtoken');
 const { response } = require("express");
 
+/**
+ * GET friend by userId (friendId)
+ */
+router.route('/friends/friend/:userId/:token/:friendId').get(async (req, res) => {
+    let auth;
+    try {
+        auth = jwt.verify(req.params.token, process.env.TOKEN_SECRET);
+        if (!auth) {
+            res.status(401);
+            return;
+        }
+    }
+    catch (error) {
+        //console.error("Auth ERROR =====> ", error);
+        res.status(401).send(error);
+        return;
+    }
+    //console.log(req.params.keyword);
+    await prisma.user.findUnique({
+        where: {
+                userId: parseInt(req.params.friendId)
+
+        },
+        select: {
+            username: true,
+            userId: true,
+            firstName: true,
+            lastName: true,
+            dob: true,
+            phone: true,
+            email: true,
+            street: true,
+            city: true,
+            province_state: true,
+            country: true,
+            displayName: true,
+            displayBirthday: true,
+            picture_med: true,
+            picture_large: true,
+            about: true,
+            gender: true
+        }
+    })
+        .then((user) => {
+            res.status(200).json(user);
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(404);
+        });
+});
+
+/**
+ * GET add friend by userId (friendId)
+ */
+router.route('/friends/friend/add/:userId/:token/:friendId').get(async (req, res) => {
+
+    if (!verifyToken(req.params.token)) {
+        res.status(401);
+        return;
+    }
+    //console.log(req.params.keyword);
+    await prisma.user.update({
+        where: {
+            userId: parseInt(req.params.userId)
+
+        },
+        data: {friends: userToAdd} // <=============== to finish
+    })
+        .then((user) => {
+            res.status(200).json(user);
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(404);
+        });
+});
 
 
 /**
@@ -278,14 +355,21 @@ const createToken = (user_) => {
 };
 
 
-/**
- * 
- * @param {String} token_
- */
 const verifyToken = (token_) => {
-    //console.info("process.env.TOKEN_SECRET ==> ", process.env.TOKEN_SECRET);
-    return jwt.verify(token_, process.env.TOKEN_SECRET);
-};
+    try {
+        const result = jwt.verify(token_, process.env.TOKEN_SECRET);
+        if (result) {
+            return true;
+            
+        }
+        else {
+            return false;
+        }
+    }
+    catch (error) {
+        return false;
+    }
+}
 
 
 /**

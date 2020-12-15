@@ -58,8 +58,31 @@ class App extends React.Component {
 		const cloneState = this.state;
 		cloneState.isLoggedIn = sessionStorage.getItem("isloggedIn");
 		cloneState.user = user;
-		this.setState(cloneState);
-		this.props.history.push("/userDetails");
+		this.setState(cloneState, this.props.history.push("/userDetails"));
+	}
+
+	addFriendHandler = (friendId_) => {
+		let cloneState = this.state;
+		
+			const queryUrl = `${process.env.REACT_APP_SERVER_URL}/users/friends/friend/add/${sessionStorage.getItem("userId")}/${sessionStorage.getItem("token")}/${friendId_}`;
+			//console.info(queryUrl);
+			
+			axios.get(queryUrl)
+			.then(response => {
+				cloneState.friends = response.data;
+				
+				cloneState.searchMode = response.data === [] ? false : true;
+				//console.log("response data: ", response.data);
+				//console.dir(response);
+				this.setState(cloneState);
+
+			})
+			.catch(error => {
+			console.error(error);
+				cloneState.searchMode = false;
+				cloneState.friends = [];
+				this.setState(cloneState);
+			});
 	}
 
 	logoutHandler = () => {
@@ -89,7 +112,7 @@ class App extends React.Component {
 				cloneState.friends = response.data;
 				
 				cloneState.searchMode = response.data === [] ? false : true;
-				console.log("response data ---- " + response.data);
+				//console.log("response data: ", response.data);
 				//console.dir(response);
 				this.setState(cloneState);
 
@@ -107,10 +130,24 @@ class App extends React.Component {
 			this.setState(cloneState);
 		}
 
-		
-
-
 	}
+
+	friendDetailsHandler = (userId_) => {
+		console.log(userId_);
+		const queryUrl = `${process.env.REACT_APP_SERVER_URL}/users/friends/friend/${sessionStorage.getItem("userId")}/${sessionStorage.getItem("token")}/${userId_}`;
+			
+			axios.get(queryUrl)
+				.then(response => {
+					console.log("friendDetailsHandler ", response.data);
+					const cloneState = this.state;
+					cloneState.friendClicked = response.data;
+					cloneState.searchMode = false;
+					this.setState(cloneState, this.props.history.push("/friendDetails"));
+			})
+			.catch(error => {
+				console.error(error);
+			});
+		}		
 
 	render() {
 
@@ -124,21 +161,22 @@ class App extends React.Component {
 					logoutHandler={this.logoutHandler}
 				/>
 
-				{ this.state.searchMode && <ModalSearch friends={this.state.friends} /> }
-
-
+				{ this.state.searchMode && <ModalSearch friends={this.state.friends} friendDetailsHandler={ this.friendDetailsHandler }/> }
 			<Switch>
 				{/* <Route exact path="/" /> */}
+				
 
 				<Route exact path="/login">
 						<Login loginHandler={ this.loginHandler }/>
 				</Route>
             
 				<Route path="/userAddEdit" render={(props) => <UserAddEdit {...props} user={this.state.user} />} />			
-				<Route path="/userDetails" render={(props) => <UserDetails {...props} user={this.state.user} friends={[]} />} />
-
+				<Route path="/userDetails" render={(props) => <UserDetails {...props} isOwner={true} user={this.state.user} friends={[]} />} />
+					<Route path="/friendDetails" render={(props) => <UserDetails {...props} isOwner={false} user={this.state.friendClicked} addFriendHandler={ this.addFriendHandler } />} />
+			
 				<Route path="/signup" render={ (props) => <Signup {...props} /> } />  
 			</Switch>
+
 			</div>
 			
 		);
