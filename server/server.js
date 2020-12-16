@@ -33,11 +33,11 @@ app.use('/activities', activityRoute);
 // });
 
 const dataSeeder = require('./seedData/populateDb');
-//dataSeeder.populateUserTable();
-//dataSeeder.populateEventTable();
-//dataSeeder.populateCommentTable();
-//dataSeeder.populateReactionTable();
-//dataSeeder.populateActivityTable();
+// dataSeeder.populateUserTable();
+// dataSeeder.populateEventTable();
+// dataSeeder.populateCommentTable();
+// dataSeeder.populateReactionTable();
+// dataSeeder.populateActivityTable();
 
 app.listen(PORT, () => {
     console.log(`Server listening on http://localhost:${PORT}`);

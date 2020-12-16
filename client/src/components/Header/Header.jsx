@@ -8,15 +8,11 @@ import { Redirect, Link } from 'react-router-dom';
 class Header extends React.Component {
 
 
-	constructor(props) {
-		super(props);
-		console.log(props);
+		buttonLabel = "Log out";
 
-		this.buttonLabel = "Log out";
-	}
 
 	render() {
-
+		console.log("Header ", this.props);
 		return (
 			<header className="header">
 				{

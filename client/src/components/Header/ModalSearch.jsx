@@ -14,7 +14,7 @@ class ModalSearch extends React.Component {
                 <div className="modal__content">
 
                     <ul className="modal__list">
-                        {this.props.friends.map(item => {
+                        {this.props.friends && this.props.friends.map(item => {
                             return (
                                 <li key={item.userId} className="modal__item"  onClick={ () => this.props.friendDetailsHandler(item.userId) }>
                                     <div>

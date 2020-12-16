@@ -59,7 +59,7 @@ router.route('/').post(async (req, res) => {
             commentCommentId: req.body.commentId
         }
     })
-        .then((newreaction) => res.status(201).json({ newreaction }))
+        .then((newReaction) => res.status(201).json({ newReaction }))
         .catch((err) => {
             console.error(err);
             res.status(404);

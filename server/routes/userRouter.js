@@ -7,7 +7,6 @@ const prisma = new PrismaClient();
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const jwt = require('jsonwebtoken');
-const { response } = require("express");
 
 /**
  * GET friend by userId (friendId)
@@ -31,25 +30,6 @@ router.route('/friends/friend/:userId/:token/:friendId').get(async (req, res) =>
         where: {
                 userId: parseInt(req.params.friendId)
 
-        },
-        select: {
-            username: true,
-            userId: true,
-            firstName: true,
-            lastName: true,
-            dob: true,
-            phone: true,
-            email: true,
-            street: true,
-            city: true,
-            province_state: true,
-            country: true,
-            displayName: true,
-            displayBirthday: true,
-            picture_med: true,
-            picture_large: true,
-            about: true,
-            gender: true
         }
     })
         .then((user) => {
@@ -65,19 +45,25 @@ router.route('/friends/friend/:userId/:token/:friendId').get(async (req, res) =>
  * GET add friend by userId (friendId)
  */
 router.route('/friends/friend/add/:userId/:token/:friendId').get(async (req, res) => {
-
-    if (!verifyToken(req.params.token)) {
+    const result = verifyToken(req.params.token);
+    console.log(result)
+    if (!result) {
         res.status(401);
         return;
     }
-    //console.log(req.params.keyword);
-    await prisma.user.update({
-        where: {
-            userId: parseInt(req.params.userId)
-
-        },
-        data: {friends: userToAdd} // <=============== to finish
-    })
+    console.log("Add friend route ", req.params);
+    await prisma.friends.create({
+        data: {
+            friend: {
+                connect: { userId: Number(req.params.friendId) }
+            },
+            owner: {
+                connect: {
+                    userId: Number(req.params.userId)
+                }
+            }
+        }
+        })
         .then((user) => {
             res.status(200).json(user);
         })
@@ -114,25 +100,6 @@ router.route('/friends/:userId/:token/:keyword').get(async (req, res) => {
                 { about: { contains: `${req.params.keyword}` } }
             ]
 
-        },
-        select: {
-            username: true,
-            userId: true,
-            firstName: true,
-            lastName: true,
-            dob: true,
-            phone: true,
-            email: true,
-            street: true,
-            city: true,
-            province_state: true,
-            country: true,
-            displayName: true,
-            displayBirthday: true,
-            picture_med: true,
-            picture_large: true,
-            about: true,
-            gender: true
         }
     })
         .then((users) => {
@@ -154,27 +121,6 @@ router.route('/authorize/:username/:password').get(async (req, res) => {
     await prisma.user.findFirst({
         where: {
             username: `${req.params.username}`
-        },
-        select: {
-            username: true,
-            userId: true,
-            password: true,
-            firstName: true,
-            lastName: true,
-            dob: true,
-            phone: true,
-            email: true,
-            street: true,
-            city: true,
-            province_state: true,
-            country: true,
-            displayName: true,
-            displayBirthday: true,
-            avatar: true,
-            picture_med: true,
-            picture_large: true,
-            about: true,
-            gender: true
         }
     })
         .then((user) => {
@@ -350,14 +296,16 @@ router.route('/:userId').delete(async (req, res) => {
  * @param {String} user_
  */
 const createToken = (user_) => {
-    //console.info("process.env.TOKEN_SECRET ==> ", process.env.TOKEN_SECRET);
     return jwt.sign({ username: user_ }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
 };
 
 
 const verifyToken = (token_) => {
+    console.log("verifyToken");
     try {
+        console.log("verifyToken");
         const result = jwt.verify(token_, process.env.TOKEN_SECRET);
+        console.log(result);
         if (result) {
             return true;
             

@@ -15,8 +15,9 @@ export default class ClientModel {
      * @param {string} avatarFileName
      * @param {Object} avatarBlob
      * @param {Object} address
+     * @param {Object} friends
      */
-    constructor(userId, userName, password, firstName, lastName, dob, about, email, phone, gender, avatarFileName, avatarBlob, address) {
+    constructor(userId, userName, password, firstName, lastName, dob, about, email, phone, gender, avatarFileName, avatarBlob, address, friends) {
 
         this.userId = userId;
         this.userName = userName;
@@ -31,6 +32,7 @@ export default class ClientModel {
         this.avatarFileName = avatarFileName;
         this.avatarBlob = avatarBlob;
         this.address = address;
+        this.friends = friends;
     };
 
     stringify() {
@@ -47,7 +49,8 @@ export default class ClientModel {
             gender: this.gender,
             avatarFileName: this.avatarFileName,
             avatarBlob: this.avatarBlob,
-            address: this.address
+            address: this.address,
+            friends: this.friends
         });
     }
 
@@ -65,7 +68,8 @@ export default class ClientModel {
             gender: this.gender,
             avatarFileName: this.avatarFileName,
             avatarBlob: this.avatarBlob,
-            address: this.address
+            address: this.address,
+            friends: this.friends
         };
     }
 }

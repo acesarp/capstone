@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 /**
- * GET all signup
+ * GET signup
  */
 router.route('/signup').post((req, res) => {
     try {
@@ -47,7 +47,7 @@ router.route('/login').post((req, res) => {
 });
 
 
-// get logout
+// GET logout
 router.route('/logout').get((req, res) => {
     res.status(200);
 });

@@ -10,41 +10,48 @@ class UserAddEdit extends React.Component {
 
     constructor(props) {
         super(props);
-        let dob_ =new Date(this.props.user.dob).toString().substr(0, 10)
         console.info(props);
-
-        this.state = { // mock data
-            formData: {
-                username: this.props.user.username,
-                firstName: this.props.user.firstName,
-                lastName: this.props.user.lastName,
-                password: this.props.user.password,
-                dob: dob_,
-                email: this.props.user.email,
-                phone: this.props.user.phone,
-                gender: this.props.user.gender,
-                //avatar: this.props.user.avatar,
-                about: this.props.user.about,
-                street: this.props.user.street,
-                city: this.props.user.city,
-                province_state: this.props.user.province_state,
-                country: this.props.user.country
-                //username: "Allen42",
-                // password: "p@$$w0rd",
-                // firstName: "Guelph",
-                // lastName: "Allemm",
-                // dob: "1957-02-10",
-                // email: "all57@email.ca",
-                // phone: "555-555-5555",
-                // gender: "male",
-                // about: "Me me me",
-                // avatar: "",
-                // street: "Fake st",
-                // city: "Seattle",
-                // province_state: "AL",
-                // country: "France"
-            }
-		}
+        if (this.props.user) {
+            this.state = { // Edit existing user
+                formData: {
+                    username: this.props.user.username,
+                    firstName: this.props.user.firstName,
+                    lastName: this.props.user.lastName,
+                    password: this.props.user.password,
+                    dob: new Date(this.props.user.dob).toString().substr(0, 10),
+                    email: this.props.user.email,
+                    phone: this.props.user.phone,
+                    gender: this.props.user.gender,
+                    //avatar: this.props.user.avatar,
+                    about: this.props.user.about,
+                    street: this.props.user.street,
+                    city: this.props.user.city,
+                    province_state: this.props.user.province_state,
+                    country: this.props.user.country
+                }
+            };
+        }
+        else {
+            // New user - mock data for testing
+            this.state = {
+                formData: {
+                    username: "abcd22323",
+                    password: "p@$$w0rd",
+                    firstName: "Paul",
+                    lastName: "Zachm",
+                    dob: "1967-08-10",
+                    email: "zachh_1212@email.ca",
+                    phone: "555-555-5355",
+                    gender: "male",
+                    about: "Me me me me me me",
+                    avatar: "",
+                    street: "Fake st",
+                    city: "Seattle",
+                    province_state: "AL",
+                    country: "France"
+                }
+            };
+        }
     }
 
     async componentDidMount() {
@@ -53,7 +60,7 @@ class UserAddEdit extends React.Component {
         // no need to populate the form
         if (!this.props.user.userId) return; 
 
-        getUserData(this.props.userId, sessionStorage.getItem("token"));
+        getUserData(this.props.userId, localStorage.getItem("token"));
     }
     /**
      * 
@@ -136,7 +143,7 @@ class UserAddEdit extends React.Component {
                 push /> }
                         <div
                             className="user-details__edit-btn"
-                            // onClick={this.props.history && this.props.history.goBack()}
+                            onClick={this.props.history && this.props.history.goBack }
                         >
                             <img className="icon user-details__edit--icon" src={BackIcon} alt="" />
                         </div>

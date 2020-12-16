@@ -16,9 +16,9 @@ async function authorizeUser(userName_, password_) {
     const result = await axios.get(requestUrl);
     console.log("loginHandler() ===>", result.data.user);
     console.error(result);
-    sessionStorage.setItem("token", result.data.token);
-    sessionStorage.setItem("userId", result.data.user.userId);
-    sessionStorage.setItem('isloggedIn', true);
+    localStorage.setItem("token", result.data.token);
+    localStorage.setItem("userId", result.data.user.userId);
+    localStorage.setItem('isloggedIn', true);
 
     return result.data.user;
 }
@@ -35,7 +35,7 @@ async function logout(userId_) {
         if (response.status === 200) {
             localStorage.removeItem("token");
             localStorage.removeItem("userId");
-            sessionStorage.setItem('isloggedIn', false);
+            localStorage.setItem('isloggedIn', false);
             const cloneState = this.state;
             cloneState.isUserLoggedIn = false;
             this.setState(cloneState);
@@ -46,13 +46,13 @@ async function logout(userId_) {
 
 
 /**
- * 
+ * @param {String} userId_
  * @param {String} token_ 
  */
-async function getUserData(userId, token_) {
+async function getUserData(userId_, token_) {
     try {
         console.log("Getting user...");
-        const response = await axios.get(`${serverUrl}/users/${userId}/${token_}`);
+        const response = await axios.get(`${serverUrl}/users/${userId_}/${token_}`);
         console.log(response.data);
 
         return response.data[0];
@@ -69,11 +69,11 @@ async function getUserData(userId, token_) {
  * @returns {Object} data
  */
 async function postUser(user_) {
-    const method = sessionStorage.getItem("token") ? "PUT" : "POST"; // if no id is passed, POST will be used to create new record
+    const method = localStorage.getItem("token") ? "PUT" : "POST"; // if no id is passed, POST will be used to create new record
     
     const result = await axios({
             method: method,
-            url: `${serverUrl}/users/${sessionStorage.getItem("token")}`,
+        url: `${serverUrl}/users/${localStorage.getItem("token")}`,
             headers: {
                 'Content-Type': 'application/json'
             },

@@ -78,8 +78,17 @@ model User {
   picture_large    String?
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @default(now())
-  friends          User[]
+  friends          Friends[]
   events           Event[]
   comments         Comment[]
   reactions        Reaction[]
 }
+
+model Friends {
+  friendshipId Int @id @default(autoincrement())
+  userId    Int
+  owner    User @relation(name: "friend_owner", fields: [userId], references: [userId])
+  friendId Int
+  friend  User @relation(fields: [friendId], references: [userId])
+}
+

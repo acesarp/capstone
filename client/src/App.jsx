@@ -7,6 +7,7 @@ import UserDetails from './components/User/UserDetails';
 import { authorizeUser, logout } from './authorizationScripts';
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import UserAddEdit from './components/User/UserAddEdit';
+import UserFriendsList from './components/User/UserFriendsList';
 //import UserFriendsList from './components/User/UserDetails';
 import Signup from './components/Signup';
 import axios from 'axios';
@@ -56,32 +57,20 @@ class App extends React.Component {
 			//========> redirect TODO;
 		}
 		const cloneState = this.state;
-		cloneState.isLoggedIn = sessionStorage.getItem("isloggedIn");
+		cloneState.isLoggedIn = localStorage.getItem("isloggedIn");
 		cloneState.user = user;
 		this.setState(cloneState, this.props.history.push("/userDetails"));
 	}
 
 	addFriendHandler = (friendId_) => {
-		let cloneState = this.state;
 		
-			const queryUrl = `${process.env.REACT_APP_SERVER_URL}/users/friends/friend/add/${sessionStorage.getItem("userId")}/${sessionStorage.getItem("token")}/${friendId_}`;
-			//console.info(queryUrl);
-			
+			const queryUrl = `${process.env.REACT_APP_SERVER_URL}/users/friends/friend/add/${localStorage.getItem("userId")}/${localStorage.getItem("token")}/${friendId_}`;
 			axios.get(queryUrl)
 			.then(response => {
-				cloneState.friends = response.data;
-				
-				cloneState.searchMode = response.data === [] ? false : true;
-				//console.log("response data: ", response.data);
-				//console.dir(response);
-				this.setState(cloneState);
-
+				console.log(response.data)
 			})
 			.catch(error => {
 			console.error(error);
-				cloneState.searchMode = false;
-				cloneState.friends = [];
-				this.setState(cloneState);
 			});
 	}
 
@@ -104,7 +93,7 @@ class App extends React.Component {
 		console.log(keyword, this.state.friends, this.state.searchMode);
 		
 		if (keyword !== "") {
-			const queryUrl = `${process.env.REACT_APP_SERVER_URL}/users/friends/${sessionStorage.getItem("userId")}/${sessionStorage.getItem("token")}/${keyword}`;
+			const queryUrl = `${process.env.REACT_APP_SERVER_URL}/users/friends/${localStorage.getItem("userId")}/${localStorage.getItem("token")}/${keyword}`;
 			//console.info(queryUrl);
 			
 			axios.get(queryUrl)
@@ -134,7 +123,7 @@ class App extends React.Component {
 
 	friendDetailsHandler = (userId_) => {
 		console.log(userId_);
-		const queryUrl = `${process.env.REACT_APP_SERVER_URL}/users/friends/friend/${sessionStorage.getItem("userId")}/${sessionStorage.getItem("token")}/${userId_}`;
+		const queryUrl = `${process.env.REACT_APP_SERVER_URL}/users/friends/friend/${localStorage.getItem("userId")}/${localStorage.getItem("token")}/${userId_}`;
 			
 			axios.get(queryUrl)
 				.then(response => {
@@ -164,16 +153,13 @@ class App extends React.Component {
 				{ this.state.searchMode && <ModalSearch friends={this.state.friends} friendDetailsHandler={ this.friendDetailsHandler }/> }
 			<Switch>
 				{/* <Route exact path="/" /> */}
-				
-
 				<Route exact path="/login">
-						<Login loginHandler={ this.loginHandler }/>
-				</Route>
-            
+					<Login loginHandler={ this.loginHandler }/>
+				</Route>            
 				<Route path="/userAddEdit" render={(props) => <UserAddEdit {...props} user={this.state.user} />} />			
-				<Route path="/userDetails" render={(props) => <UserDetails {...props} isOwner={true} user={this.state.user} friends={[]} />} />
-					<Route path="/friendDetails" render={(props) => <UserDetails {...props} isOwner={false} user={this.state.friendClicked} addFriendHandler={ this.addFriendHandler } />} />
-			
+				<Route path="/userDetails" render={(props) => <UserDetails {...props} isOwner={true} user={this.state.user} />} />
+					<Route path="/userFriendsList" render={(props) => <UserFriendsList {...props} friends={ this.state.user.friends} />} />
+				<Route path="/friendDetails" render={(props) => <UserDetails {...props} isOwner={false} user={this.state.friendClicked} addFriendHandler={ this.addFriendHandler } />} />
 				<Route path="/signup" render={ (props) => <Signup {...props} /> } />  
 			</Switch>
 
