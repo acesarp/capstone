@@ -30,6 +30,7 @@ class ModalSearch extends React.Component {
                                 </li>
                             );
                         })}
+                        { this.props.friends && this.props.friends.length === 0  && <li>Not found.</li>}
                     </ul>
                     </div>
             </div>

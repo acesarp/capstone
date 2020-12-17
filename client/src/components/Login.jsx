@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import Signup from './Signup';
 import { Link } from 'react-router-dom';
 
 class Login extends React.Component {
@@ -78,12 +77,14 @@ class Login extends React.Component {
             			Submit
         			</button>
             
-				</form >
-        <Link
-            className="btn signup__btn"
-            to='/signup'>
-        	Sign up
-        </Link>
+					</form >
+		<button>
+        	<Link
+            	className="btn signup__btn"
+    			to='/signup'>	
+				Sign up
+        	</Link>
+		</button>
 		</Fragment>);
 
     }
@@ -91,7 +92,13 @@ class Login extends React.Component {
 
     	tagToRender = (
         	<Fragment>
-				<Signup Handler={ this.props.authHandler }/>
+			<button>
+        	<Link
+            	className="btn signup__btn"
+    			to='/signup'>	
+				Sign up
+        	</Link>
+		</button>
 				<button onClick={() => this.loginIsVisile(true)}>Login</button>
         	</Fragment>
     	);

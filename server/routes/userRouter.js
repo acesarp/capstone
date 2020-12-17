@@ -29,8 +29,44 @@ router.route('/friends/friend/:userId/:token/:friendId').get(async (req, res) =>
     await prisma.user.findUnique({
         where: {
                 userId: parseInt(req.params.friendId)
-
         }
+    })
+        .then((user) => {
+            res.status(200).json(user);
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(404);
+        });
+});
+
+
+/**
+ * GET all friends by userId
+ */
+router.route('/friends/all/:userId/:token').get(async (req, res) => {
+    console.log(req.params.token, req.params.userId);
+    let auth;
+    try {
+        auth = jwt.verify(req.params.token, process.env.TOKEN_SECRET);
+        if (!auth) {
+            res.status(401);
+            return;
+        }
+    }
+    catch (error) {
+        //console.error("Auth ERROR =====> ", error);
+        res.status(401).send(error);
+        return;
+    }
+    await prisma.user.findMany({
+        where: {
+            NOT: [{
+                userId: parseInt(req.params.userId)
+            }
+            ]
+        }
+
     })
         .then((user) => {
             res.status(200).json(user);
@@ -124,19 +160,19 @@ router.route('/authorize/:username/:password').get(async (req, res) => {
         }
     })
         .then((user) => {
-            console.info(user);
-            if (req.params.password === user.password) {
+            console.info("user ", user);
+            if (user) {
                 const token = createToken(user.username);
                 user.password = "";
                 res.status(200).json({ user: user, token: token });
             }
             else {
-                res.status(404);
+                res.status(404).json({ username: req.params.username , message: "Username or password invalid."});
             }
         })
         .catch(error => {
             console.error(error);
-            res.status(500);
+            res.status(500)({ error: token });
         });
 });
 
@@ -145,9 +181,12 @@ router.route('/authorize/:username/:password').get(async (req, res) => {
  * GET logout
  */
 router.route('/logout/:userId/:token').get(async (req, res) => {
+    //console.log(req.params.token, req.params.userId);
     try {
-        if (req.params.token && req.params.userId)
-            res.status(200);
+        if (req.params.token && req.params.userId) {
+            console.log(req.params.userId);
+            res.status(200).json({tokken: req.params.token, userId: req.params.userId});
+        }
     }
     catch (error) {
         console.error("Auth ERROR =====> ", error);
@@ -183,7 +222,7 @@ router.route('/').post(async (req, res) => {
             email: req.body.email,
             street: req.body.address.street,
             city: req.body.address.city,
-            province_state: req.body.address.provinceState,
+            province_state: req.body.address.province_state,
             country: req.body.address.country,
             userFolderPath: "",
             avatar: "",
@@ -193,32 +232,32 @@ router.route('/').post(async (req, res) => {
             gender: req.body.gender,
         }
     })
-    .then(async (newUser) => {
+    .then(async (user) => {
         if (req.body.avatarFileName) {
             const imageData = req.body.avatarBlob.replace(/^data:image\/png;base64,/, "");
-            const userfolderPath_ = `${usersFolderPath}${newUser.userId}-ProfileData/`;
-            const avatarFileName_ = `${newUser.userId}-avatar-[${new Date().getMilliseconds()}]`.replace(/\s/g, "");
+            const userfolderPath_ = `${usersFolderPath}${user.userId}-ProfileData/`;
+            const avatarFileName_ = `${user.userId}-avatar-[${new Date().getMilliseconds()}]`.replace(/\s/g, "");
             
             mkdirp(userfolderPath_);
 
-            updateField("userFolderPath", userfolderPath_, newUser.userId);
-            updateField("avatar", avatarFileName_, newUser.userId);
+            updateField("userFolderPath", userfolderPath_, user.userId);
+            updateField("avatar", avatarFileName_, user.userId);
 
             fs.writeFile(`${userfolderPath_}${avatarFileName_}`, imageData, 'base64', (msg) => {
                 console.error(msg);
-                console.info(newUser);
-                res.status(201).json({ newUser, token: createToken(newUser.username) });
-                console.info(newUser);
+                console.info(user);
+                res.status(201).json({ user, token: createToken(user.username) });
+                console.info(user);
             });
         }
         else {
-            res.status(201).json({ newUser, token: createToken(newUser.username) });
-            console.info(newUser);
+            res.status(201).json({ user, token: createToken(user.username) });
+            console.info(user);
         }
     })
     .catch((error) => {
         console.error(error);
-        res.status(500).send(error);
+        res.status(200).json({error: error});
     });
 });
 
@@ -239,7 +278,7 @@ router.route('/').put(async (req, res) => {
             email: req.body.email,
             street: req.body.street,
             city: req.body.city,
-            province_state: req.body.provinceState,
+            province_state: req.body.province_state,
             country: req.body.country,
             userFolderPath: "",
             displayName: req.body.login.username,
@@ -250,7 +289,7 @@ router.route('/').put(async (req, res) => {
         },
         where: { userId: req.body.userId }
     })
-        .then((updateUser) => res.status(201).json({ updateUser }))
+        .then((user) => res.status(201).json({ user }))
         .catch((err) => {
             console.error(err);
             res.status(404);
@@ -352,7 +391,7 @@ const setPrismaData = (body_) => {
         email: body_.email,
         street: body_.street,
         city: body_.city,
-        province_state: body_.state,
+        province_state: body_.province_state,
         country: body_.country,
         userFolderPath: body_.userFolderPath ?? "",
         displayName: body_.displayName ? body_.displayName : `${body_.firstName} ${body_.lastName}`,
@@ -363,8 +402,5 @@ const setPrismaData = (body_) => {
     };
 
 };
-
-module.exports = router;
-
 
 module.exports = router;

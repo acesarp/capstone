@@ -32,7 +32,7 @@ app.use('/activities', activityRoute);
 //     saveUninitialized: false
 // });
 
-const dataSeeder = require('./seedData/populateDb');
+// const dataSeeder = require('./seedData/populateDb');
 // dataSeeder.populateUserTable();
 // dataSeeder.populateEventTable();
 // dataSeeder.populateCommentTable();

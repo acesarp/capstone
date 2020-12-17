@@ -34,21 +34,23 @@ class UserAddEdit extends React.Component {
         else {
             // New user - mock data for testing
             this.state = {
+
                 formData: {
-                    username: "abcd22323",
+                    username: "mickey555",
                     password: "p@$$w0rd",
-                    firstName: "Paul",
-                    lastName: "Zachm",
+                    firstName: "Mickey",
+                    lastName: "Mouse",
                     dob: "1967-08-10",
-                    email: "zachh_1212@email.ca",
-                    phone: "555-555-5355",
+                    email: "mickey-mouse@email.ca",
+                    phone: "555-123-4321",
                     gender: "male",
                     about: "Me me me me me me",
                     avatar: "",
+                    avatarImgSrc: "",
                     street: "Fake st",
-                    city: "Seattle",
-                    province_state: "AL",
-                    country: "France"
+                    city: "Orlando",
+                    province_state: "FL",
+                    country: "USA"
                 }
             };
         }
@@ -58,9 +60,9 @@ class UserAddEdit extends React.Component {
         console.log("user: ", this.props.user);
         // If there's no userId a new user will be created (Signup)
         // no need to populate the form
-        if (!this.props.user.userId) return; 
-
-        getUserData(this.props.userId, localStorage.getItem("token"));
+        if (this.props.user) {
+            getUserData(this.props.userId, localStorage.getItem("token"));
+        }
     }
     /**
      * 
@@ -105,14 +107,27 @@ class UserAddEdit extends React.Component {
                 }
             );
 
-            //console.log(model.toJSON());
+            console.log(model.toJSON());
 
-            const result = postUser(model);
-            const cloneState = this.state;
-            cloneState.user = result.user;
-            cloneState.isLoggedIn = true;
-            this.setState(cloneState);
-            event.target.reset();
+            const token = this.state.userId ? localStorage.getItem("token") : "";
+            const result = await postUser(model, token);
+            
+            //const cloneState = this.state;
+            //console.log(result.data.user);
+            if (result.data.error && result.data.error.meta.target === "username_unique") {
+                alert(model.userName + " User name already exists!");
+            }
+            else if (result.data.error && result.data.error.meta.target === "email_unique") {
+                alert(model.email + " Email already exists!");
+            }
+            else {
+                //cloneState.user = result.data.user;
+                //cloneState.isLoggedIn = true;
+                this.props.setUserParent(result.data.user);
+                this.props.history.push('/userDetails');
+                //this.setState(cloneState);
+                //event.target.reset();
+            }
             
         }
         catch (error) {
@@ -125,8 +140,15 @@ class UserAddEdit extends React.Component {
         const cloneState = this.state;
         console.log(event.target.name, event.target.value);
         cloneState.formData[event.target.name] = event.target.value;
+        if (event.target.name === "avatar") {
+            //var image = document.getElementById('avatar-image-id');
+            cloneState.formData.avatarImgSrc = URL.createObjectURL(event.target.files[0]);
+            console.log(cloneState.formData.avatarImgSrc);
+        }
         this.setState(cloneState);
     };
+
+
 
     render() {
         //console.log(this.state)
@@ -134,11 +156,7 @@ class UserAddEdit extends React.Component {
 
             <div className="form__wrapper">
                 {this.state.isLoggedIn && <Redirect to={{
-                    pathname: "/userDetails",
-                    state: {
-                        obj: "obj",
-                    user: this.state.user
-                    }
+                    pathname: "/userDetails"
                 }}
                 push /> }
                         <div
@@ -147,7 +165,7 @@ class UserAddEdit extends React.Component {
                         >
                             <img className="icon user-details__edit--icon" src={BackIcon} alt="" />
                         </div>
-                <h1>Edit profile</h1>
+                <h1>{this.props.user ? "Edit" : "Create" } profile</h1>
                 <form
                     className="from-user"
                     onSubmit={this.formSubmitHandler}>
@@ -254,7 +272,10 @@ class UserAddEdit extends React.Component {
                     <div className="form__group">
                         <label className="form__label"> Avatar </label>
                         <div>
-                            <img src={ this.props.user.avatar } alt="avatar to upload"/>
+
+                            {this.props.user && <img src={this.props.user.avatar} alt="avatar to upload" />}
+                            {!this.props.user && <img id="avatar-image-id" src={ this.state.formData.avatarImgSrc} alt="avatar to upload" />}
+
                         </div>
                         <input className="form__input"
                             type="file"

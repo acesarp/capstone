@@ -9,7 +9,6 @@ import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import UserAddEdit from './components/User/UserAddEdit';
 import UserFriendsList from './components/User/UserFriendsList';
 //import UserFriendsList from './components/User/UserDetails';
-import Signup from './components/Signup';
 import axios from 'axios';
 import dotenv from 'dotenv';
 import ModalSearch from './components/Header/ModalSearch';
@@ -50,34 +49,55 @@ class App extends React.Component {
 	}
 
 	loginHandler = async (event) => {
-		const user = await authorizeUser(event.userName, event.password);
-		//console.table(user);
-		if (!user) { 
-			return (<Redirect to="/login" />);
-			//========> redirect TODO;
+		const result = await authorizeUser(event.userName, event.password);
+		
+		if (result.response && result.response.data.message) {
+			alert(result.response.data.message);
+			return; //(<Redirect to="/login" />);
 		}
-		const cloneState = this.state;
-		cloneState.isLoggedIn = localStorage.getItem("isloggedIn");
-		cloneState.user = user;
-		this.setState(cloneState, this.props.history.push("/userDetails"));
+		if (result.data) {
+			const user = result.data.user;
+			const cloneState = this.state;
+			cloneState.isLoggedIn = sessionStorage.getItem("isloggedIn");
+			cloneState.user = user;
+			this.setState(cloneState, this.props.history.push("/userDetails"));
+		}
+		else {
+			alert("Server is offline.");
+		}
 	}
 
 	addFriendHandler = (friendId_) => {
 		
-			const queryUrl = `${process.env.REACT_APP_SERVER_URL}/users/friends/friend/add/${localStorage.getItem("userId")}/${localStorage.getItem("token")}/${friendId_}`;
-			axios.get(queryUrl)
-			.then(response => {
-				console.log(response.data)
-			})
-			.catch(error => {
-			console.error(error);
-			});
+		const queryUrl = `${process.env.REACT_APP_SERVER_URL}/users/friends/friend/add/${sessionStorage.getItem("userId")}/${sessionStorage.getItem("token")}/${friendId_}`;
+		axios.get(queryUrl)
+		.then(response => {
+			console.log(response.data);
+			alert("Friend added!");
+		})
+		.catch(error => {
+		console.error(error);
+		});
 	}
 
-	logoutHandler = () => {
-		const data = logout();
-		console.info(data);
-		const cloneState = this.state;
+	setUserParent = (user_) => {
+		let cloneState = this.state;
+		cloneState.userId = user_.userId;
+		cloneState.isLoggedIn = true;
+		cloneState.user = user_;
+		this.setState(cloneState);
+	}
+
+	logoutHandler = async () => {
+		const data = await logout();
+		console.info("Logout status: ", data);
+		const cloneState = {
+			isLoggedIn: false,
+			userId: -1,
+			user: {},
+			searchMode: false,
+			friends: []
+		};
 		cloneState.isLoggedIn = false;
 		this.setState(cloneState);
 	}
@@ -93,7 +113,7 @@ class App extends React.Component {
 		console.log(keyword, this.state.friends, this.state.searchMode);
 		
 		if (keyword !== "") {
-			const queryUrl = `${process.env.REACT_APP_SERVER_URL}/users/friends/${localStorage.getItem("userId")}/${localStorage.getItem("token")}/${keyword}`;
+			const queryUrl = `${process.env.REACT_APP_SERVER_URL}/users/friends/${sessionStorage.getItem("userId")}/${sessionStorage.getItem("token")}/${keyword}`;
 			//console.info(queryUrl);
 			
 			axios.get(queryUrl)
@@ -101,7 +121,7 @@ class App extends React.Component {
 				cloneState.friends = response.data;
 				
 				cloneState.searchMode = response.data === [] ? false : true;
-				//console.log("response data: ", response.data);
+				console.log("response data: ", response.data);
 				//console.dir(response);
 				this.setState(cloneState);
 
@@ -123,7 +143,7 @@ class App extends React.Component {
 
 	friendDetailsHandler = (userId_) => {
 		console.log(userId_);
-		const queryUrl = `${process.env.REACT_APP_SERVER_URL}/users/friends/friend/${localStorage.getItem("userId")}/${localStorage.getItem("token")}/${userId_}`;
+		const queryUrl = `${process.env.REACT_APP_SERVER_URL}/users/friends/friend/${sessionStorage.getItem("userId")}/${sessionStorage.getItem("token")}/${userId_}`;
 			
 			axios.get(queryUrl)
 				.then(response => {
@@ -156,11 +176,15 @@ class App extends React.Component {
 				<Route exact path="/login">
 					<Login loginHandler={ this.loginHandler }/>
 				</Route>            
-				<Route path="/userAddEdit" render={(props) => <UserAddEdit {...props} user={this.state.user} />} />			
-				<Route path="/userDetails" render={(props) => <UserDetails {...props} isOwner={true} user={this.state.user} />} />
-					<Route path="/userFriendsList" render={(props) => <UserFriendsList {...props} friends={ this.state.user.friends} />} />
-				<Route path="/friendDetails" render={(props) => <UserDetails {...props} isOwner={false} user={this.state.friendClicked} addFriendHandler={ this.addFriendHandler } />} />
-				<Route path="/signup" render={ (props) => <Signup {...props} /> } />  
+					<Route path="/signup" render={(props) => <UserAddEdit {...props} setUserParent={this.setUserParent} />} />
+				
+					<Route path="/userAddEdit" render={(props) => <UserAddEdit {...props} user={this.state.user} />} />
+					
+					<Route path="/userDetails" render={(props) => <UserDetails {...props} isOwner={true} user={this.state.user} />} />
+					
+					<Route path="/userFriendsList" render={(props) => <UserFriendsList {...props} friends={this.state.user.friends} />} />
+					
+					<Route path="/friendDetails" render={(props) => <UserDetails {...props} isOwner={false} user={this.state.friendClicked} addFriendHandler={this.addFriendHandler} />} /> 
 			</Switch>
 
 			</div>

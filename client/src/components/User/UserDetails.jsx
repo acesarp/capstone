@@ -11,7 +11,7 @@ class UserDetails extends React.Component {
         console.log("this.props: ", this.props);
         this.state = {
             friends: [],
-            user: this.props.user || this.props.friendClicked
+            user: this.props.user || this.props.friendClicked || this.props.location.state.user
         };
     }
 
@@ -32,8 +32,10 @@ class UserDetails extends React.Component {
                     }
 
                         <h1 className="user-details__title" >{ titleMessage }</h1>
-                    <Link className="user-details__img-wrapper" to={"/userFriendsList"}>
-                            <img className="user-details__img" src={this.props.user && this.props.user.avatar} alt="profile" />
+                    <Link className="user-details__btn-wrapper" to={"/userFriendsList"}>
+                        <button className="user-details__btn">
+                            My Friends
+                        </button>
                         </Link>
                         <div className="user-details__img-wrapper">
                             <img className="user-details__img" src={this.props.user && this.props.user.picture_large} alt="profile" />
