@@ -2,11 +2,40 @@ const express = require('express');
 const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const jwt = require('jsonwebtoken');
+const mysql = require('mysql');
 
+const sqlConnection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "Vancouver2020",
+    database: "capstone-project-prisma"
+
+});
 
 
 /**
- * GET all events by userId
+ * GET all events
+ */
+router.route('/all/:userId').get(async (req, res) => {
+    console.log(req.params)
+    await prisma.event.findMany({
+        where: {
+            ownerId: parseInt(req.params.userId)
+        },
+    })
+        .then((events) => {
+            //console.info(events);
+            res.status(200).json(events);
+        })
+        .catch(error => {
+            //console.error(error);
+            res.status(404);
+        });
+});
+
+/**
+ * GET events by userIdand index
  */
 router.route('/:userId/:index').get(async (req, res) => {
     await prisma.event.findMany({
@@ -24,6 +53,7 @@ router.route('/:userId/:index').get(async (req, res) => {
             res.status(404);
         });
 });
+
 
 /**
  * 
@@ -50,20 +80,42 @@ router.route('/:eventId').get(async (req, res) => {
  * POST event
  */
 router.route('/').post(async (req, res) => {
-
-    await prisma.event.create({
-        data: {
-            owner: { connect: {userId: req.body.userId}}, //req.body.________,
-            name: req.body.name,
-            address: req.body.address,
-            description: req.body.description
+    console.log(req.body);
+    try {
+        if (!jwt.verify(req.headers.token, process.env.TOKEN_SECRET)) {
+            res.status(401);
+            return;
         }
+
+        await prisma.event.create({
+            data: {
+                owner: { connect: { userId: req.body.ownerId } },
+                name: req.body.name,
+                address: req.body.location,
+                description: req.body.description
+            }
         })
-        .then((newevent) => res.status(201).json({ newevent }))
+            .then((newevent) => {
+                req.body.participants.forEach(async item => {
+                    console.log(item);
+                    await prisma.event.update({
+                        data: {
+                            participants: { connect: { userId: item } }
+                        },
+                        where: { eventId: parseInt(newevent.eventId) }
+                    });
+                    
+                });
+                res.status(201).json({ newevent });
+            })
         .catch((err) => {
             console.error(err);
             res.status(404);
         });
+    } 
+    catch (error) {
+        console.error(error);
+    }
 });
 
 
@@ -74,9 +126,11 @@ router.route('/').post(async (req, res) => {
 router.route('/').put(async (req, res) => {
     await prisma.event.update({
         data: {
+            owner: { connect: { userId: req.body.ownerId } },
             name: req.body.name,
-            address: req.body.address,
-            description: req.body.description
+            address: req.body.location,
+            description: req.body.description,
+            participants: req.body.participants
         },
         where: { eventId: req.body.eventId }
     })

@@ -7,6 +7,16 @@ const prisma = new PrismaClient();
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const jwt = require('jsonwebtoken');
+const mysql = require('mysql');
+
+
+const sqlConnection = mysql.createConnection({
+
+    host: "localhost",
+    user: "root",
+    password: "Vancouver2020"
+
+});
 
 /**
  * GET friend by userId (friendId)
@@ -19,12 +29,24 @@ router.route('/friends/friend/:userId/:token/:friendId').get(async (req, res) =>
             res.status(401);
             return;
         }
+        const queryString = `SELECT * FROM Friends WHERE userId = ${mysql.escape(req.params.userId)}`;
+        sqlConnection.query(`USE 'capstone-project-prisma'`);
+        sqlConnection.query(queryString, (error, result) => {
+            if (error) throw error;
+            console.log("Result: " + result);
+            res.status(200).json(result);
+
+        });
     }
     catch (error) {
-        //console.error("Auth ERROR =====> ", error);
-        res.status(401).send(error);
+        //console.error("Auth ERROR ==> ", error);
+        res.status(404).send(error);
         return;
     }
+
+
+
+
     //console.log(req.params.keyword);
     await prisma.user.findUnique({
         where: {
@@ -41,11 +63,12 @@ router.route('/friends/friend/:userId/:token/:friendId').get(async (req, res) =>
 });
 
 
+
 /**
  * GET all friends by userId
  */
 router.route('/friends/all/:userId/:token').get(async (req, res) => {
-    console.log(req.params.token, req.params.userId);
+    // console.log(req.params.token, req.params.userId);
     let auth;
     try {
         auth = jwt.verify(req.params.token, process.env.TOKEN_SECRET);
@@ -87,6 +110,8 @@ router.route('/friends/friend/add/:userId/:token/:friendId').get(async (req, res
         res.status(401);
         return;
     }
+
+
     console.log("Add friend route ", req.params);
     await prisma.friends.create({
         data: {
@@ -153,7 +178,7 @@ router.route('/friends/:userId/:token/:keyword').get(async (req, res) => {
  * GET authorize user
  */ 
 router.route('/authorize/:username/:password').get(async (req, res) => {
-    console.info("GET authorize user ", req.params);
+    //console.info("GET authorize user ", req.params);
     await prisma.user.findFirst({
         where: {
             username: `${req.params.username}`
@@ -199,8 +224,18 @@ router.route('/logout/:userId/:token').get(async (req, res) => {
  * 
  * 
  */
-router.route('/pictures/:picturename/:userId').get((req, res) => {
-    res.sendFile(`${ usersFolderPath }${ req.params.userId }-ProfileData/${req.params.picturename}`, (error) => {
+router.route('/images/:imagename/:userId').get((req, res) => {
+    res.sendFile(`${usersFolderPath}${req.params.userId}-ProfileData/gallery/${req.params.imagename}`, (error) => {
+        console.error(error);
+    });
+});
+
+/**
+ * 
+ * 
+ */
+router.route('/images/all/:userId').get((req, res) => {
+    res.sendFile(`${__dirname}/usersData/${req.params.userId}-ProfileData/gallery`, (error) => {
         console.error(error);
     });
 });
@@ -244,8 +279,7 @@ router.route('/').post(async (req, res) => {
             updateField("avatar", avatarFileName_, user.userId);
 
             fs.writeFile(`${userfolderPath_}${avatarFileName_}`, imageData, 'base64', (msg) => {
-                console.error(msg);
-                console.info(user);
+                //console.error(msg);
                 res.status(201).json({ user, token: createToken(user.username) });
                 console.info(user);
             });
@@ -256,7 +290,7 @@ router.route('/').post(async (req, res) => {
         }
     })
     .catch((error) => {
-        console.error(error);
+        //console.error(error);
         res.status(200).json({error: error});
     });
 });
@@ -266,32 +300,34 @@ router.route('/').post(async (req, res) => {
 /**
 * PUT, update user
 */
-router.route('/').put(async (req, res) => {
+router.route('/:token').put(async (req, res) => {
+    //console.log(req.body);
     await prisma.user.update({
         data: {
             username: req.body.username,
-            password: req.body.password,
             firstName: req.body.first,
             lastName: req.body.last,
-            dob: req.body.dob.date,
+            dob: new Date(req.body.dob),
             phone: req.body.phone,
             email: req.body.email,
             street: req.body.street,
-            city: req.body.city,
-            province_state: req.body.province_state,
-            country: req.body.country,
+            city: req.body.address.city,
+            province_state: req.body.address.province_state,
+            country: req.body.address.country,
             userFolderPath: "",
-            displayName: req.body.login.username,
+            displayName: req.body.firstName,
             displayBirthday: null,
             about: req.body.about,
             gender: req.body.gender,
-            avatar: req.body.picture.thumbnail
         },
-        where: { userId: req.body.userId }
+        where: { userId: Number(req.body.userId) }
     })
-        .then((user) => res.status(201).json({ user }))
+        .then((user) => {
+            console.log(user.email)
+            res.status(201).json({ user });
+        })
         .catch((err) => {
-            console.error(err);
+            //console.error(err);
             res.status(404);
         });
 });
@@ -301,7 +337,7 @@ router.route('/').put(async (req, res) => {
  * DELETE user
  */
 router.route('/:userId').delete(async (req, res) => {
-    console.log(req.params);
+    //console.log(req.params);
     try {
         await prisma.user.delete({
             where: { userId: parseInt(req.params.userId) }
@@ -402,5 +438,10 @@ const setPrismaData = (body_) => {
     };
 
 };
+
+
+// expressListRoutes({ prefix: '/api/v1' }, 'API:', router );
+
+
 
 module.exports = router;

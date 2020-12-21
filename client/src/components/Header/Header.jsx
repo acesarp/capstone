@@ -2,17 +2,16 @@
 
 import React from 'react';
 import logo from '../../assets/images/logo-transparent.png';
-import { Redirect, Link } from 'react-router-dom';
-//import UserFriendsList from '../User/UserFriendsList';
+import { Redirect, Link, withRouter } from 'react-router-dom';
 
 class Header extends React.Component {
 
 
-		buttonLabel = "Log out";
-
+	buttonLabel = "Log out";
 
 	render() {
 		console.log("Header ", this.props);
+
 		return (
 			<header className="header">
 				{
@@ -24,7 +23,7 @@ class Header extends React.Component {
 						</div>
 					{
 						this.props.loginStatus &&
-						<div className="header__inner-wrapper--col-1" onClick={ this.props.history && this.props.history.push('/userDetails')}>
+						<div className="header__inner-wrapper--col-1" onClick={ () => this.props.history.push('/userDetails')}>
 							<p className="header__text" >{this.props.user.displayName}</p>
 							<div className="header__avatar--wrapper">
 								<img
@@ -59,10 +58,44 @@ class Header extends React.Component {
 						}
 					</div>
 				</div>
-        
+				{
+					this.props.loginStatus &&
+					<div className="header--row-2">
+						<div className="header__btn-group">
+
+							<Link
+								className="header__btn-wrapper"
+								to={"/userDetails"}>
+								<button className="header__btn">Home</button>
+							</Link>
+                            
+							<button className="header__btn"
+								onClick={() => this.props.history.push("/addeditevent") } >
+								Add Event
+							</button>
+							<button
+								className="header__btn"
+								onClick={() => this.props.history.push('/eventlist')}>
+								Events
+							</button>
+                            
+							<button
+								className="header__btn"
+								onClick={() => this.props.history.push("/userFriendsList")}>
+								Friends
+							</button>
+							<button
+								className="header__btn"
+								onClick={() => this.props.history.push("/gallery")}>
+								Gallery
+							</button>
+
+						</div>
+					</div>
+				}
 			</header>
 		);
 	}
 }
 
-export default Header;
+export default withRouter(Header);

@@ -69,12 +69,12 @@ async function getUserData(userId_, token_) {
  * @param {ClientModel} user_
  * @returns {Object} data
  */
-async function postUser(user_, token_ = "") {
-    const method = token_ ? "PUT" : "POST"; // if no token is passed, POST will be used to create new record
-    
+async function postUser(user_) {
+    const method = sessionStorage.getItem("token") ? "PUT" : "POST"; // if no token is passed, POST will be used to create new record
+    console.log(sessionStorage.getItem("token"));
     const result = await axios({
-            method: method,
-        url: `${serverUrl}/users/${token_}`,
+        method: method,
+        url: `${serverUrl}/users/${sessionStorage.getItem("token")}`,
             headers: {
                 'Content-Type': 'application/json'
             },

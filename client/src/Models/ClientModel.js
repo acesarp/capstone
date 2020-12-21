@@ -38,7 +38,7 @@ export default class ClientModel {
     stringify() {
         return JSON.stringify({
             userId: this.userId,
-            userName: this.userName,
+            username: this.userName,
             password: this.password,
             firstName: this.firstName,
             lastName: this.lastName,
@@ -57,7 +57,7 @@ export default class ClientModel {
     toJSON() {
         return {
             userId: this.userId,
-            userName: this.userName,
+            username: this.userName,
             password: this.password,
             firstName: this.firstName,
             lastName: this.lastName,

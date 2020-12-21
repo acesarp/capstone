@@ -1,108 +1,137 @@
 
 import React from 'react';
-import './App.css';
 import axios from 'axios';
+import PropTypes from 'prop-types';
+import { Dropdown } from 'semantic-ui-react'
 
 class EventAddEdit extends React.Component {
-    serverUrl = "localhost:5000"
-    submitBtnLabel = "Add";
+    submitBtnLabel = "Save";
     
     constructor(props) {
         super(props);
+
+        console.dir("EventAddEdit props: ", this.props);
         this.state = {
             isLoggedIn: false,
+            friends: [],
             formData: {
-                userName: "",
                 name: "",
-                firstName: "",
-                lastName: "",
-                dob: new Date(),
+                date: new Date(),
+                description: "",
                 location: "",
-                gender: ""
+                participants: []
             }
         }
-    }
+        }
 
-    formHandler(event) {
-        event.preventDefault();
-        let formData = event.target.values;
-        let method_ = "";
-        if (this.state.eventId) {
-            method_ = "post";
-            this.submitBtnLabel = "Add Event"
+
+
+    componentDidMount() {		
+		const queryUrl = `${process.env.REACT_APP_SERVER_URL}/users/friends/all/${sessionStorage.getItem("userId")}/${sessionStorage.getItem("token")}`;
+		axios.get(queryUrl)
+		.then(response => {
+            console.log(response.data);
+            const cloneState = this.state;
+            cloneState.friends = [];
+            response.data.forEach(element => {
+                console.log("element: ", element);
+                cloneState.friends.push({ key: element.userId , text: `${element.firstName} ${element.lastName}`, value: element.userId });
+            });
+            console.log(cloneState.friends);
+            this.setState(cloneState);
+		})
+		.catch(error => {
+		console.error(error);
+		});
+	}
+
+
+    changeHandler = (event, result) => {
+        //console.log(event.target.value || (result && result.value));
+        const currentState = this.state;
+        if (!result) {
+            currentState.formData[event.target.name] = event.target.value;
         }
         else {
-            method_ = "put";
-            this.submitBtnLabel = "Edit Event"
+            currentState.formData[result.name] = result.value;
         }
-        axios(`${this.serverUrl}/events`, {
-            headers: {
-                method: method_
-            },
-            data: {
-                name: formData.name,
-                firstName: formData.firstName,
-                lastName: formData.lastName,
-                date: formData.dob,
-                location: formData.location,
-                participants: formData.participants
-            }
-        })
-        .then(response => {
-            console.error(response);
-        })
-        .catch(error => console.error(error));
 
-    }
-
-    changeHandler(event) {
-        //console.log([event.target.name], event.target.value);
-        const currentState = this.state;
-        currentState.formData[event.target.name] = event.target.value;
         this.setState(currentState);
     }
 
 
     render() {
         return (
-            <div className="add-edit-event__wrapper">
-                <h1>{ this.props.pagetitle }</h1>
-
-                <form className="event-from" onSubmit={this.formHandler}>
-                    <label className="event-form__label">
-                        <input className="event-form__input" type="text" name="name" onChange={this.changeHandler} />
-                    </label>
-                    <label className="event-form__label">
-                        <input className="event-form__input" type="text" name="firstName" onChange={this.changeHandler} />
-                    </label>
-                        <label className="event-form__label">
-                    <input className="event-form__input" type="text" name="description" onChange={this.changeHandler} />
-                    </label>
-                        <label className="event-form__label">
-                        <input className="event-form__input" type="date" name="date" onChange={this.changeHandler} />
-                    </label>
-                    <label className="event-form__label">
-                        <input className="event-form__input" type="location" name="location" onChange={this.changeHandler} />
-                    </label>
-                    <label className="event-form__label">
-                        <select
-                            className="event-form__input" 
-                            name="participants"
+            <React.Fragment>
+                <div className="event__wrapper">
+                    <div className="event__header">
+                <h1 className="font--light">{this.props.eventId && this.props.pageTitle } Event </h1>
+                <button className="event-form__btn" onClick={this.props.history.goBack}>Back</button>
+                    </div>
+                    <form className="event-form" onSubmit={(e) => { e.preventDefault(); this.props.submitEventHandler(this.state.formData); }}>
+                        
+                    <label className="event-form__label">Title </label>
+                        <input
+                            className="event-form__input"
+                            type="text"
+                            name="name"
+                            value={ this.state.formData.name}
+                            onChange={this.changeHandler} />
+            
+                    <label className="event-form__label">Description </label>
+                        <input
+                            className="event-form__input"
+                            type="text"
+                            name="description"
                             onChange={this.changeHandler}
-                            multiple>
-                            
-                            {this.state && this.state.friends.map(friend => {
-                                return <option aria-checked key={friend.profileId} value={friend.profileId}>{friend.displayname}</option>
-                            })} 
-                        </select>
-                    </label>
-                    <label className="event-form__label">
-                        <input className="event-form__input" type="submit" value={ this.submitBtnLabel } />
-                    </label>
+                            value={ this.state.formData.description}/>
+                    
+                    <label className="event-form__label">Date</label>
+                        <input
+                            className="event-form__input"
+                            type="date"
+                            name="date"
+                            value={ this.state.formData.date}
+                            onChange={this.changeHandler} />
+    
+                    <label className="event-form__label">Location</label>
+                        <input
+                            className="event-form__input"
+                            type="location"
+                            name="location"
+                            value={ this.state.location}
+                            onChange={this.changeHandler} />
+                        
+                        <label className="event-form__label">Participants</label>
+                        <Dropdown
+                            placeholder='Add friends'
+                            name="participants"
+                            fluid
+                            multiple
+                            selection
+                            options={this.state.friends}
+                            onChange={this.changeHandler}
+                            value={this.state.formData.participants }/>
+
+                        <button className="event-form__btn" type="submit" value="submit" >Save</button>
                 </form>
-            </div>
+                </div>
+            </React.Fragment>
         );
     }
 }
 
 export default EventAddEdit;
+
+
+EventAddEdit.propTypes = {
+    name: PropTypes.string,
+    lastName: PropTypes.string,
+    date: PropTypes.string,
+    description: PropTypes.string,
+    location: PropTypes.string,
+    participants: PropTypes.array,
+    submitEventHandler: PropTypes.func
+}
+
+

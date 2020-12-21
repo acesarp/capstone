@@ -2,21 +2,6 @@ $tablet_min_width: 768px;
 $desktop_min_width: 1080px;
 
 
-$navigation_background_fill: #323232; // Black
-$primary_CTA: #0095FF; // blue
-$primary_CTA_hover: #0065AD; 
-$paragraph_text: #323232; // Black
-$text_label_style: #AFAFAF; // Silver
-$silver: #AFAFAF; // Silver
-$text_field_border: #E1E1E1; // Ablaster
-$text_field_background_fill: #FAFAFA; //Mercury
-$text_color:  #FAFAFA;  // Ablaster
-$white: #FFFFFF; // White
-$mercury: #E1E1E1; //Mercury
-
-$gutter_width_mobile: 1rem;
-$gutter_width: 1.5rem;
-
 
 
 @mixin tablet {

@@ -72,15 +72,14 @@ class Login extends React.Component {
 						autoComplete="true"
 						aria-current="true"
 						placeholder="Password" />
-
-            		<button className="btn" type="submit"  >
-            			Submit
+						<a href="/" alt="">Forgot password?</a>
+            		<button className="button" type="submit"  >
+            			Login
         			</button>
             
 					</form >
-		<button>
+		<button className="button">
         	<Link
-            	className="btn signup__btn"
     			to='/signup'>	
 				Sign up
         	</Link>
@@ -92,14 +91,14 @@ class Login extends React.Component {
 
     	tagToRender = (
         	<Fragment>
-			<button>
+			<button className="button">
         	<Link
-            	className="btn signup__btn"
+            	className=""
     			to='/signup'>	
 				Sign up
         	</Link>
 		</button>
-				<button onClick={() => this.loginIsVisile(true)}>Login</button>
+				<button className="button" onClick={() => this.loginIsVisile(true)}>Login</button>
         	</Fragment>
     	);
     }

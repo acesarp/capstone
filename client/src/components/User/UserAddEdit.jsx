@@ -10,28 +10,7 @@ class UserAddEdit extends React.Component {
 
     constructor(props) {
         super(props);
-        console.info(props);
-        if (this.props.user) {
-            this.state = { // Edit existing user
-                formData: {
-                    username: this.props.user.username,
-                    firstName: this.props.user.firstName,
-                    lastName: this.props.user.lastName,
-                    password: this.props.user.password,
-                    dob: new Date(this.props.user.dob).toString().substr(0, 10),
-                    email: this.props.user.email,
-                    phone: this.props.user.phone,
-                    gender: this.props.user.gender,
-                    //avatar: this.props.user.avatar,
-                    about: this.props.user.about,
-                    street: this.props.user.street,
-                    city: this.props.user.city,
-                    province_state: this.props.user.province_state,
-                    country: this.props.user.country
-                }
-            };
-        }
-        else {
+        console.info(props.user);
             // New user - mock data for testing
             this.state = {
 
@@ -54,9 +33,38 @@ class UserAddEdit extends React.Component {
                 }
             };
         }
-    }
+    
 
     async componentDidMount() {
+        let clone;
+        console.info(this.props.user);
+        if (this.props.user) {
+            const dob = this.props.user.dob.split('-');
+
+            console.info(this.props.user);
+            const dobAsString = `${dob[0]}-${dob[1]}-${dob[2].substring(0,2)}`;
+            clone = { // Edit existing user
+                formData: {
+
+                    username: this.props.user.username,
+                    firstName: this.props.user.firstName,
+                    lastName: this.props.user.lastName,
+                    password: this.props.user.password,
+                    dob: dobAsString,
+                    email: this.props.user.email,
+                    phone: this.props.user.phone,
+                    gender: this.props.user.gender,
+                    //avatar: props.user.avatar,
+                    about: this.props.user.about,
+                    street: this.props.user.street,
+                    city: this.props.user.city,
+                    province_state: this.props.user.province_state,
+                    country: this.props.user.country
+                }
+            };
+            this.setState(clone);
+        }
+        
         console.log("user: ", this.props.user);
         // If there's no userId a new user will be created (Signup)
         // no need to populate the form
@@ -87,12 +95,12 @@ class UserAddEdit extends React.Component {
 
             //console.table(imageBase64);
             const model = new ClientModel(
-                this.state.userId,
+                sessionStorage.getItem("userId"),
                 data.get("username").toString(),
                 data.get("password").toString(),
                 data.get("firstName").toString(),
                 data.get("lastName").toString(),
-                new Date(data.get("dob").toString()),
+                data.get("dob"),
                 data.get("about").toString(),
                 data.get("email").toString(),
                 data.get("phone").toString(),
@@ -108,9 +116,7 @@ class UserAddEdit extends React.Component {
             );
 
             console.log(model.toJSON());
-
-            const token = this.state.userId ? localStorage.getItem("token") : "";
-            const result = await postUser(model, token);
+            const result = await postUser(model);
             
             //const cloneState = this.state;
             //console.log(result.data.user);
@@ -159,13 +165,8 @@ class UserAddEdit extends React.Component {
                     pathname: "/userDetails"
                 }}
                 push /> }
-                        <div
-                            className="user-details__edit-btn"
-                            onClick={this.props.history && this.props.history.goBack }
-                        >
-                            <img className="icon user-details__edit--icon" src={BackIcon} alt="" />
-                        </div>
-                <h1>{this.props.user ? "Edit" : "Create" } profile</h1>
+                <button className="event-form__btn" onClick={this.props.history.goBack}>Back</button>
+                <h1 className="white-text">{this.props.user ? "Edit" : "Create" } profile</h1>
                 <form
                     className="from-user"
                     onSubmit={this.formSubmitHandler}>
@@ -323,17 +324,10 @@ class UserAddEdit extends React.Component {
                     </div>
                     <div className="button-group">
                     <button
-                        className="btn"
+                        className="button"
                         type="submit"
                         value="submit" >
                         Save
-                    </button>
-                    <button
-                        onClick={ () => {this.props.history.goBack()} }
-                        className="btn"
-                        type="button"
-                        value="cancel" >
-                            Back
                     </button>
                         </div>
                 </form>

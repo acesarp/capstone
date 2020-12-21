@@ -33,20 +33,19 @@ class UserFriendsList extends React.Component {
     
 
     render() {
-            console.dir(this.state);
+        //console.dir(this.state);
         return (
             <div className="user-list">
-                <div
-                    className="user-details__edit-btn"
-                    onClick={ this.props.history.goBack } >
-                    <img className="icon user-details__edit--icon" src={BackIcon} alt="" />
-                </div>
+                <button className="event-form__btn" onClick={this.props.history.goBack}>Back</button>
                 
-                <h1 className="">My friends list</h1>
-                <div >
+                <h1 className="font--light">My friends list</h1>
+                <div className="user-list__container">
                         {this.state.friends && this.state.friends.map(item => {
                             return <div key={item.id} className="user-list__card">
-
+                                <button className="delete-btn--small">
+                                    X
+                                </button>
+                                <div className="user-list__card--col-1">
                                         <div className="user-list__card--row-1">
                                             <div className="">
                                                 <img className="header__avatar" src={item.avatar} alt="friend" />
@@ -55,13 +54,12 @@ class UserFriendsList extends React.Component {
                                         </div >
 
                                         <div className="user-list__card--row-1">
-                                            <div>
-                                                <img className="user-list__card--btn" src={DeleteIcon} alt="unfriend button" />
-                                            </div>
+
                                             <span className="user-list__card--row-1-a">{item.firstName} {item.lastName}</span>
 
                                         </div>
-                                    </div>
+                                </div>
+                                </div>
                             })
                         }
                 </div>
