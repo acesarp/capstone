@@ -3,7 +3,6 @@ import React from 'react';
 import { getUserData, postUser } from '../../authorizationScripts';
 import ClientModel from '../../Models/ClientModel';
 import { Redirect, withRouter } from 'react-router-dom';
-import BackIcon from '../../assets/images/icons/color-icons/png/back-icon.png';
 
 class UserAddEdit extends React.Component {
 
@@ -129,10 +128,12 @@ class UserAddEdit extends React.Component {
             else {
                 //cloneState.user = result.data.user;
                 //cloneState.isLoggedIn = true;
+                event.target.reset();
                 this.props.setUserParent(result.data.user);
+                alert("Personal data updated!");
                 this.props.history.push('/userDetails');
                 //this.setState(cloneState);
-                //event.target.reset();
+
             }
             
         }
@@ -288,39 +289,44 @@ class UserAddEdit extends React.Component {
                     </div>
                     <div className="form__group">
 
-                        <label className="form__label"> Address 
-                            
-                            <label className="form__label">street</label>
-                        <input className="form__input"
-                            type="text"
-                            name="street"
-                            value={this.state.formData.street}
+                        <div className="form__group--large">
+                            <div className="form__label--large"> Address </div>
+                            <div>
+                            <div className="form__label">Street</div>
+                            <input className="form__input"
+                                type="text"
+                                name="street"
+                                value={this.state.formData.street}
+                                    onChange={this.changeHandler} />
+                            </div>
+                            <div>
+                            <div className="form__label">City</div>
+                            <input className="form__input"
+                                type="text"
+                                name="city"
+                                placeholder="Enter City"
+                                value={this.state.formData.city}
                                 onChange={this.changeHandler} />
-                            
-                        <label className="form__label">City</label>
-                        <input className="form__input"
-                            type="text"
-                            name="city"
-                            placeholder="Enter City"
-                            value={this.state.formData.city}
-                            onChange={this.changeHandler} />
-                            
-                        <label className="form__label">Province or State</label>
-                        <input className="form__input"
-                            type="text"
-                                name="province_state"
-                                placeholder="Enter Province/State"
-                            value={this.state.formData.province_state}
-                                onChange={this.changeHandler} />
-                            
-                            <label className="form__label">Country</label>
-                        <input className="form__input"
-                            type="text"
-                            name="country"
-                                value={this.state.formData.country}
-                                placeholder="Enter Country"
-                            onChange={this.changeHandler} />
-                        </label>
+                            </div>
+                            <div>
+                            <div className="form__label">Province or State</div>
+                            <input className="form__input"
+                                type="text"
+                                    name="province_state"
+                                    placeholder="Enter Province/State"
+                                value={this.state.formData.province_state}
+                                    onChange={this.changeHandler} />
+                            </div>
+                            <div>
+                            <div className="form__label">Country</div>
+                            <input className="form__input"
+                                type="text"
+                                name="country"
+                                    value={this.state.formData.country}
+                                    placeholder="Enter Country"
+                                    onChange={this.changeHandler} />
+                                </div>
+                        </div>
                     </div>
                     <div className="button-group">
                     <button

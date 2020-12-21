@@ -136,6 +136,18 @@ class UserDetails extends React.Component {
 
                 <div className="user-details__card--large">
                     <div className="user-details__card--title">Address:</div>
+                        <li className="user-details__item">
+                        <div className="user-details__card">
+
+                        <div className="user-details__label">
+                            Street
+                        </div>
+                        <div className="user-details__field">
+                                {this.props.user.street}
+                            </div>
+
+                        </div>
+                    </li>
                     <li className="user-details__item">
                         <div className="user-details__card">
 

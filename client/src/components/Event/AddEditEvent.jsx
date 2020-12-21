@@ -59,6 +59,12 @@ class EventAddEdit extends React.Component {
         this.setState(currentState);
     }
 
+    submitHandler = (event) => {
+        event.preventDefault();
+        this.props.submitEventHandler(this.state.formData);
+    }
+
+
 
     render() {
         return (
@@ -68,14 +74,15 @@ class EventAddEdit extends React.Component {
                 <h1 className="font--light">{this.props.eventId && this.props.pageTitle } Event </h1>
                 <button className="event-form__btn" onClick={this.props.history.goBack}>Back</button>
                     </div>
-                    <form className="event-form" onSubmit={(e) => { e.preventDefault(); this.props.submitEventHandler(this.state.formData); }}>
+                    <form className="event-form" onSubmit={this.submitHandler}>
                         
                     <label className="event-form__label">Title </label>
                         <input
                             className="event-form__input"
                             type="text"
                             name="name"
-                            value={ this.state.formData.name}
+                            value={this.state.formData.name}
+                            required
                             onChange={this.changeHandler} />
             
                     <label className="event-form__label">Description </label>
@@ -84,6 +91,7 @@ class EventAddEdit extends React.Component {
                             type="text"
                             name="description"
                             onChange={this.changeHandler}
+                            required
                             value={ this.state.formData.description}/>
                     
                     <label className="event-form__label">Date</label>

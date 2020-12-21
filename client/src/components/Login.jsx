@@ -80,7 +80,7 @@ class Login extends React.Component {
 					</form >
 		<button className="button">
         	<Link
-    			to='/signup'>	
+    			to='/signup'>
 				Sign up
         	</Link>
 		</button>
@@ -105,7 +105,7 @@ class Login extends React.Component {
 
     return (
 		<div className="login__wrapper">
-			<h1 className="title">{ this.state.pageTitle}</h1>
+			<h1 className="font--light title">{ this.state.pageTitle}</h1>
 			{tagToRender}
 		</div>
     );

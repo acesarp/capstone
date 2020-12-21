@@ -179,9 +179,13 @@ class App extends React.Component {
             }
         })
         .then(response => {
-            console.error(response);
+			console.info(response.data);
+			alert("Event added!")
+			this.props.history.push("./eventlist");
         })
-        .catch(error => console.error(error));
+		.catch(error => {
+			console.error(error);
+		});
 
     }
 
@@ -221,7 +225,7 @@ class App extends React.Component {
 			</Switch>
 
 			</div>
-			
+
 		);
 	}
 
