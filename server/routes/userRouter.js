@@ -14,7 +14,8 @@ const sqlConnection = mysql.createConnection({
 
     host: "localhost",
     user: "root",
-    password: "Vancouver2020"
+    password: "Vancouver2020",
+    database: 'capstone-project-prisma'
 
 });
 
@@ -23,26 +24,26 @@ const sqlConnection = mysql.createConnection({
  */
 router.route('/friends/friend/:userId/:token/:friendId').get(async (req, res) => {
     let auth;
-    try {
-        auth = jwt.verify(req.params.token, process.env.TOKEN_SECRET);
-        if (!auth) {
-            res.status(401);
-            return;
-        }
-        const queryString = `SELECT * FROM Friends WHERE userId = ${mysql.escape(req.params.userId)}`;
-        sqlConnection.query(`USE 'capstone-project-prisma'`);
-        sqlConnection.query(queryString, (error, result) => {
-            if (error) throw error;
-            console.log("Result: " + result);
-            res.status(200).json(result);
+    // try {
+    //     //sqlConnection.query(`USE 'capstone-project-prisma'`);
+    //     auth = jwt.verify(req.params.token, process.env.TOKEN_SECRET);
+    //     if (!auth) {
+    //         res.status(401);
+    //         return;
+    //     }
+    //     const queryString = `SELECT * FROM Friends WHERE userId = ${mysql.escape(req.params.userId)}`;
+    //     sqlConnection.query(queryString, (error, result) => {
+    //         if (error) throw error;
+    //         console.log({ ...result });
+    //         res.status(200).json(result);
 
-        });
-    }
-    catch (error) {
-        //console.error("Auth ERROR ==> ", error);
-        res.status(404).send(error);
-        return;
-    }
+    //     });
+    // }
+    // catch (error) {
+    //     //console.error("Auth ERROR ==> ", error);
+    //     res.status(404).send(error);
+    //     return;
+    // }
 
 
 

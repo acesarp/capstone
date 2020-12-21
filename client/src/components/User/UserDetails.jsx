@@ -1,5 +1,4 @@
 import EditIcon from '../../assets/images/icons/edit.png';
-import BackIcon from '../../assets/images/icons/back-arrow.png';
 import AddIcon from '../../assets/images/icons/color-icons/png/073-add.png';
 import React from 'react';
 
@@ -23,11 +22,7 @@ class UserDetails extends React.Component {
                 <div className="user-details__header">
 
                     {!this.props.isOwner &&
-                        <button
-                            className="user-details__edit-btn"
-                            onClick={this.props.history.goBack} >
-                            <img src={ BackIcon} class="material-icons large white-text" alt=""/>
-                        </button>
+                    <button className="event-form__btn" onClick={this.props.history.goBack}>Back</button>
                     }
 
                 </div>
@@ -53,7 +48,10 @@ class UserDetails extends React.Component {
                         </div>
                     }
 
-                </div>
+            </div>
+            <div className="user-details__item" >
+                <img className="user-details__field" src={this.props.user.picture_large} alt="profile" />
+            </div>
                 <ul className="user-details__list">
 
                     {this.props.isOwner &&
@@ -66,7 +64,6 @@ class UserDetails extends React.Component {
                         </li>
 
                     }
-
 
                     <li className="user-details__item" >
                         <div className="user-details__card">
